@@ -22,70 +22,35 @@ interface Obj {
   class7: ArrayValue;
 }
 
-// 以下のデータを整形
-// const tes: Obj = {
-//   class1: {
-//     arrayValue: {
-//       values: [
-//         {
-//           stringValue: 'KZlzeAudgBVPawzaQuT7zo4BLCH3',
-//           valueType: 'stringValue',
-//         },
-//         {
-//           stringValue: 'KZlzeAudgBVPawzaQuT7zo4BLCH3',
-//           valueType: 'stringValue',
-//         },
-//         {
-//           stringValue: 'KZlzeAudgBVPawzaQuT7zo4BLCH3',
-//           valueType: 'stringValue',
-//         },
-//       ],
-//     },
-//     valueType: 'arrayValue',
-//   },
-//   class2: {
-//     arrayValue: {
-//       values: [
-//         {
-//           stringValue: 'KZlzeAudgBVPawzaQuT7zo4BLCH3',
-//           valueType: 'stringValue',
-//         },
-//         {
-//           stringValue: 'KZlzeAudgBVPawzaQuT7zo4BLCH3',
-//           valueType: 'stringValue',
-//         },
-//         {
-//           stringValue: 'KZlzeAudgBVPawzaQuT7zo4BLCH3',
-//           valueType: 'stringValue',
-//         },
-//       ],
-//     },
-//     valueType: 'arrayValue',
-//   },
-//   class3...
-// };
+// 各クラスごとの状態を保持するインターフェース
+export interface BookingStatus {
+  class1: string[];
+  class2: string[];
+  class3: string[];
+  class4: string[];
+  class5: string[];
+  class6: string[];
+  class7: string[];
+}
 
-export type BookingStatus = {
-  class1: String[];
-  class2: String[];
-  class3: String[];
-  class4: String[];
-  class5: String[];
-  class6: String[];
-  class7: String[];
-};
-
+// SeatMap クラス
 export class SeatMap implements BookingStatus {
+  class1: string[];
+  class2: string[];
+  class3: string[];
+  class4: string[];
+  class5: string[];
+  class6: string[];
+  class7: string[];
+
   constructor(obj: Obj) {
-    this.bookingMap = {
-      class1: obj.class1?.arrayValue.values.map((value) => value.stringValue),
-      class2: obj.class2?.arrayValue.values.map((value) => value.stringValue),
-      class3: obj.class3?.arrayValue.values.map((value) => value.stringValue),
-      class4: obj.class4?.arrayValue.values.map((value) => value.stringValue),
-      class5: obj.class5?.arrayValue.values.map((value) => value.stringValue),
-      class6: obj.class6?.arrayValue.values.map((value) => value.stringValue),
-      class7: obj.class7?.arrayValue.values.map((value) => value.stringValue),
-    };
+    this.class1 = obj.class1?.arrayValue.values.map((value) => value.stringValue);
+    this.class2 = obj.class2?.arrayValue.values.map((value) => value.stringValue);
+    this.class3 = obj.class3?.arrayValue.values.map((value) => value.stringValue);
+    this.class4 = obj.class4?.arrayValue.values.map((value) => value.stringValue);
+    this.class5 = obj.class5?.arrayValue.values.map((value) => value.stringValue);
+    this.class6 = obj.class6?.arrayValue.values.map((value) => value.stringValue);
+    this.class7 = obj.class7?.arrayValue.values.map((value) => value.stringValue);
   }
 }
 

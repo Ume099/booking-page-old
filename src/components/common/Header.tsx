@@ -12,6 +12,7 @@ import { FirebaseError } from 'firebase/app';
 import { getAuth, onAuthStateChanged, signOut, User } from 'firebase/auth';
 
 import { userInfoState } from '@/hooks/atom/userInfo';
+import axios from 'axios';
 import ButtonOriginal from './parts/ButtonOriginal';
 
 export const linkList = [
@@ -38,6 +39,10 @@ export const linkList = [
   {
     name: '生徒新規登録',
     link: '/createUser/',
+  },
+  {
+    name: '生徒初回ログイン画面',
+    link: '/createUser/firstLogIn',
   },
   {
     name: '予約',
@@ -92,9 +97,7 @@ const Header: React.FC = () => {
           uid: user.uid,
           isSignedIn: true,
           userName: user.displayName,
-          standardDay: '土曜',
-          educationStage: '小学',
-          grade: 1,
+          isFirstTime: false,
         });
         setLoginMessage('としてログイン中');
       } else {
@@ -122,6 +125,26 @@ const Header: React.FC = () => {
       }
     } finally {
       setUserInfo({ ...userInfo, isSignedIn: false });
+    }
+  };
+
+  // dbからユーザー情報を取得する関数
+  const getUserIsFirstTime = async () => {
+    let isError = false;
+    let result: boolean;
+    try {
+      const res = await axios.get(
+        `/api/fetchFireStore?collectionName=students&docId=${userInfo.uid || ''}`,
+      );
+      console.log('getUserInfo', res.data.isFirstTime.booleanValue);
+      result = res.data.isFirstTime.booleanValue;
+    } catch (error) {
+      isError = true;
+      return; //何もしない
+    }
+
+    if (!isError) {
+      setUserInfo({ ...userInfo, isFirstTime: result });
     }
   };
 
@@ -172,13 +195,6 @@ const Header: React.FC = () => {
                         className="self-center rounded-lg bg-primary-medium px-2 py-3"
                       >
                         ログイン
-                      </Link>
-
-                      <Link
-                        href="/signup"
-                        className="self-center rounded-lg bg-yellow-400 px-8 py-3 font-semibold text-gray-800"
-                      >
-                        新規登録
                       </Link>
                     </div>
                   )}

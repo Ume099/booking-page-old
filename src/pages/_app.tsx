@@ -4,7 +4,6 @@ import { RecoilRoot } from 'recoil';
 
 import GoogleTagManager from '@/components/common/GoogleTagManager';
 import MessageDialog from '@/components/common/MessageDialog';
-import Backdrop from '@/components/common/parts/Backdrop';
 import { googleTagManagerId } from '@/utils/gtm';
 
 import Header from '@/components/common/Header';
@@ -28,7 +27,6 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
               <Component {...pageProps} />
             </div>
             <MessageDialog />
-            <Backdrop />
           </AuthProvider>
         </ChakraProvider>
       </RecoilRoot>

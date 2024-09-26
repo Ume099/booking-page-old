@@ -1,8 +1,9 @@
-import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
-import { useRecoilState } from 'recoil';
 import ButtonOriginal from '@/components/common/parts/ButtonOriginal';
+import { getAuth, signOut } from 'firebase/auth';
+import { useRecoilState } from 'recoil';
 
-import { userInfoState } from '@/hooks/atom/userInfo';
+import { UserInfo, userInfoState } from '@/hooks/atom/userInfo';
+import { FirebaseError } from 'firebase/app';
 
 type LinkObj = {
   text: string;
