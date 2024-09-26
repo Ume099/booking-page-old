@@ -12,10 +12,6 @@ const setOpenDay = (day: number) => {
   console.log(day);
 };
 
-const handleDeleteOpenDate = (day: number) => {
-  console.log(day);
-};
-
 const CalenderToSetOpen = (props: Props) => {
   const { year, month, label = '' } = props;
   const today = dayjs();
@@ -26,12 +22,7 @@ const CalenderToSetOpen = (props: Props) => {
         {year}年 {month}月
       </h1>
       <DayOfWeek />
-      <DaysToSetOpen
-        year={year}
-        month={month}
-        setOpenDay={setOpenDay}
-        handleDeleteOpenDate={handleDeleteOpenDate}
-      />
+      <DaysToSetOpen year={year} month={month} setOpenDay={setOpenDay} />
     </div>
   );
 };

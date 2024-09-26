@@ -1,4 +1,3 @@
-import { IconType } from 'react-icons';
 import { IoMdClose } from 'react-icons/io';
 
 import ButtonOriginal from '@/components/common/parts/ButtonOriginal';
@@ -85,34 +84,3 @@ const ChangeYearAndMonthModal = (props: Props) => {
 };
 
 export default ChangeYearAndMonthModal;
-
-type CalendarButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  label?: string;
-  Icon?: IconType;
-  loading?: boolean;
-};
-
-// ボタン本体
-const CalendarButtonRow = (props: CalendarButtonProps): JSX.Element => {
-  const { label, Icon, loading, className = '', ...buttonHTMLAttributes } = props;
-
-  // Component
-  return (
-    <>
-      <button
-        onClick={setIsOpenSetmonthAndYearOnDisplayModal}
-        {...buttonHTMLAttributes}
-        className={`relative flex items-center justify-center gap-1 rounded-full border border-primary bg-white px-6 py-3 text-center text-base text-primary transition-all duration-200 ease-linear hover:opacity-70 disabled:border-theme-medium disabled:text-theme-medium disabled:opacity-100 ${
-          loading ? 'opacity-70 [&>span]:!text-transparent' : ''
-        } ${className}`}
-      >
-        {Icon && (
-          <span>
-            <Icon size={18} />
-          </span>
-        )}
-        <span>{label}</span>
-      </button>
-    </>
-  );
-};

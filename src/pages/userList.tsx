@@ -1,6 +1,7 @@
 import ButtonOriginal from '@/components/common/parts/ButtonOriginal';
 import { Box, Container, Heading, List, ListItem } from '@chakra-ui/react';
 import axios from 'axios';
+import { QRCodeCanvas } from 'qrcode.react';
 import { useState } from 'react';
 import useSWR from 'swr';
 
@@ -89,6 +90,24 @@ const UsersPage = () => {
     );
   };
 
+  const updateUserEmail = async (uid: string) => {
+    setLoading({ uid });
+    try {
+      const user = users?.find((user) => user.uid === uid);
+      await axios.put('/api/userActions/updateEmail', {
+        uid: uid,
+        newEmail: user?.email || '',
+      });
+      setErrorMessage(null); // エラーをクリア
+      await mutate(); // データの更新後に再フェッチ
+    } catch (e) {
+      console.error(e);
+      setErrorMessage('Failed to update email');
+    } finally {
+      setLoading({ uid: null });
+    }
+  };
+
   // displayNameを更新する関数
   const updateUserDisplayName = async (uid: string) => {
     setLoading({ uid });
@@ -154,12 +173,45 @@ const UsersPage = () => {
                 loading={loading.uid === user.uid}
               />
               <ButtonOriginal
+                onClick={() => updateUserEmail(user.uid)}
+                variant="secondary"
+                label="メールを更新"
+                className="ml-4"
+                loading={loading.uid === user.uid}
+              />
+              <ButtonOriginal
                 onClick={() => deleteUser(user.uid)}
                 variant="error-secondary"
                 label="削除"
                 className="ml-4"
                 loading={loadingDelete.uid === user.uid}
               />
+            </div>
+            {/* TODO: 以下を正式なドメインに変更する */}
+            <div>
+              <QRCodeCanvas
+                value={`https://booking-page-gray.vercel.app/createUser/firstLogIn?dummyMail=${
+                  user.email || ''
+                }&password=${user.uid || ''}`}
+                size={128}
+                level={'L'}
+                includeMargin={true}
+                imageSettings={{
+                  src: '/favicon.ico',
+                  x: undefined,
+                  y: undefined,
+                  height: 24,
+                  width: 24,
+                  excavate: true,
+                }}
+              />
+              <a
+                href={`http://localhost:8080/createUser/firstLogIn?dummyMail=${
+                  user.email ? user.email.replace('+', '___') : ''
+                }&uid=${user.uid || ''}`}
+              >
+                LINK
+              </a>
             </div>
           </ListItem>
         ))}

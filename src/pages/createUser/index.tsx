@@ -27,7 +27,7 @@ import {
 import { useToast } from '@chakra-ui/react';
 import axios from 'axios';
 import { FirebaseError } from 'firebase/app';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 
 import { SubmitHandler, useForm } from 'react-hook-form';
 
@@ -80,8 +80,15 @@ export const Page = () => {
     setPassword(uidParams);
   };
 
+  useLayoutEffect(() => {
+    initializer();
+  }, []);
+
+  // アカウント作成
   const createAccount = async () => {
+    console.log('createAccount>>>>>>>>>>>>>>>>>');
     setIsLoading(true);
+    let error = false;
     try {
       const response = await fetch('/api/userActions/createUser', {
         method: 'POST',
@@ -99,8 +106,12 @@ export const Page = () => {
       if (e instanceof FirebaseError) {
         console.log(e);
       }
+      error = true;
     } finally {
       setIsLoading(false);
+    }
+    if (!error) {
+      toast({ title: `${watch('familyName') + watch('givenName')}の生徒情報を追加しました。` });
     }
   };
 
@@ -129,7 +140,9 @@ export const Page = () => {
     fetchData();
   }, [watch('schoolToDoHuKen')]);
 
+  // DBにユーザー情報を登録し、成功したらユーザー作成、する関数
   const postUserData = async () => {
+    console.log('postUserData>>>>>>>>>>>>>>>>>');
     setIsLoading(true);
     try {
       setError(false);
@@ -200,7 +213,8 @@ export const Page = () => {
         console.error("couldn't create account");
         return;
       }
-      createAccount();
+
+      await createAccount();
       setIsLoading(false);
       // reset();
     }
@@ -216,6 +230,7 @@ export const Page = () => {
     fieldName: string,
     newVal: string[],
   ) => {
+    console.log('>>>>>>>>>>>>>>>>>>>>>updateClass');
     try {
       const response = await fetch('/api/booking/updateClass', {
         method: 'POST',
@@ -303,6 +318,7 @@ export const Page = () => {
   };
 
   const getAllOpenDates = async (year: number, month: number) => {
+    console.log('getAllOpenDates>>>>>>>>>>>', year, month);
     setDateList([]);
     setIsLoading(true);
 
@@ -311,6 +327,7 @@ export const Page = () => {
 
     while (shouldFetch) {
       const collectionName = `openDay_${year}_${month}`;
+      console.log(collectionName);
 
       try {
         const response = await axios.get('/api/booking/fetchOpenDays', {
@@ -358,10 +375,12 @@ export const Page = () => {
   };
 
   const setBooking = async () => {
+    console.log('setBooking was executed');
     const startDay = String(watch('classStardDate'));
     const defaultDay = String(watch('defaultDay')).split('曜日')[0];
     const defaultClass = String(watch('defaultClass'));
-    if (!startDay || !defaultDay || !defaultClass) {
+
+    if (!defaultDay || !defaultClass) {
       return; // 何もしない
     }
 
@@ -415,7 +434,10 @@ export const Page = () => {
           if ((!newVal && !additionalVal) || newVal[0] === 'default') {
             console.log('newVal is missing');
             return; // 何もしない
+          } else {
+            console.log('continues');
           }
+
           newVal = [...newVal, additionalVal];
 
           // 取得した開校日の基本曜日の基本時間にuidを追加
@@ -435,7 +457,10 @@ export const Page = () => {
 
     initializer();
     await postUserData();
+
+    console.log('setBooking will starts');
     await setBooking();
+    // reset();
   };
 
   return (
@@ -528,7 +553,7 @@ export const Page = () => {
             className="w-full"
             register={register('defaultClass')}
           />
-          <DatePicker label="授業開始日" register={register('classStardDate')} />
+          <DatePicker label="授業開始日" withDefaultValue register={register('classStardDate')} />
           <DatePicker label="退会日" register={register('exitDate')} />
           <p>授業開始日と退会日は記録用です。生徒削除は「生徒管理」ページから行えます。</p>
           <input className="rounded-lg border bg-primary px-3 py-2" type="submit" />

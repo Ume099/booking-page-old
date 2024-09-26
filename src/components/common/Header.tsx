@@ -37,7 +37,7 @@ export const linkList = [
   },
   {
     name: '生徒新規登録',
-    link: '/create-user/',
+    link: '/createUser/',
   },
   {
     name: '予約',
@@ -66,10 +66,6 @@ export const linkList = [
   {
     name: 'SignIn',
     link: '/signin',
-  },
-  {
-    name: 'CreateUser',
-    link: '/create-user',
   },
   {
     name: 'chat',

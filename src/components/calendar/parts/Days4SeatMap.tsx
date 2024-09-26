@@ -5,19 +5,11 @@ import { SetStateAction, useEffect, useMemo, useState } from 'react';
 import SeatMapModal from '@/components/calendar/parts/SeatMapModal';
 import ButtonOriginal from '@/components/common/parts/ButtonOriginal';
 
-import { DAY_STARTS_WITH_SUN } from '@/lib/date';
 import DayOfWeek from './DayOfWeek';
 
 type Props = {
   year: number;
   month: number;
-};
-
-// 曜日を取得する関数
-const getDayOfWeek = (year: number, month: number, day: number) => {
-  const date = new Date(year, month - 1, day); // 月は0から始まるので、1月は0, 2月は1, というように設定
-  const daysOfWeek = DAY_STARTS_WITH_SUN;
-  return daysOfWeek[date.getDay()];
 };
 
 const Days4SeatMap = (props: Props) => {
@@ -40,7 +32,9 @@ const Days4SeatMap = (props: Props) => {
       response.data.forEach((data: any) => itemList.push(data._fieldsProto));
 
       // openDayListに開校日を格納
-      const opnDayList = itemList.map((openDaysObj) => parseInt(openDaysObj.date?.integerValue));
+      const opnDayList = itemList.map((openDaysObj) =>
+        parseInt(openDaysObj.date?.integerValue),
+      ) as never[];
 
       // openDayList[0]はundefined
       opnDayList.shift();
@@ -60,7 +54,7 @@ const Days4SeatMap = (props: Props) => {
     setDay(day);
   };
 
-  const handleOpenSetClassModal = (day) => {
+  const handleOpenSetClassModal = (day: number) => {
     handleSetDay(day);
     setIsOpenSetClassModal((prev) => !prev);
   };
@@ -69,7 +63,7 @@ const Days4SeatMap = (props: Props) => {
     if (!targetDay) {
       return;
     }
-    return openDayList.includes(targetDay);
+    return openDayList.includes(targetDay as never);
   };
 
   const firstDayOfMonth = dayjs(new Date(year, month - 1, 1));

@@ -5,16 +5,24 @@ type InputProps = {
   placeholder?: string;
   className?: string;
   register?: UseFormRegisterReturn<any>;
+  withDefaultValue?: boolean;
 };
 
 const today = new Date();
 
-const defaultValue = `${today.getFullYear()}-${('0' + (today.getMonth() + 1)).slice(-2)}-${(
-  '0' + today.getDate()
-).slice(-2)}`;
+// date型の今日日付からdefaultValueにあったstring形式の日付を取得する関数
+const getDefaultValue = (date: Date): string => {
+  const defaultValue = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${(
+    '0' + date.getDate()
+  ).slice(-2)}`;
+
+  return defaultValue;
+};
+
+const todayValue = getDefaultValue(today);
 
 const DatePicker = (props: InputProps): JSX.Element => {
-  const { label, placeholder = '', className, register } = props;
+  const { label, placeholder = '', className, register, withDefaultValue = false } = props;
 
   return (
     <div className="mb-4 flex flex-col items-start gap-2">
@@ -23,7 +31,7 @@ const DatePicker = (props: InputProps): JSX.Element => {
       </label>
       <div>
         <input
-          value={defaultValue}
+          defaultValue={withDefaultValue ? todayValue : ''}
           type="date"
           id={label}
           {...register}

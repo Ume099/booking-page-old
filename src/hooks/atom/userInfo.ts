@@ -5,9 +5,7 @@ export type UserInfo = {
   uid: string;
   isSignedIn: boolean;
   userName: string | null;
-  standardDay: string;
-  educationStage: string;
-  grade: number;
+  isFirstTime: boolean;
 };
 
 export const userInfoState = atom<UserInfo>({
@@ -16,8 +14,6 @@ export const userInfoState = atom<UserInfo>({
     uid: '',
     isSignedIn: false,
     userName: '',
-    standardDay: '',
-    educationStage: '',
-    grade: 0,
+    isFirstTime: false,
   },
 });
