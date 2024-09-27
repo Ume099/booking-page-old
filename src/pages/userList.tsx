@@ -190,9 +190,9 @@ const UsersPage = () => {
             {/* TODO: 以下を正式なドメインに変更する */}
             <div>
               <QRCodeCanvas
-                value={`https://booking-page-gray.vercel.app/createUser/firstLogIn?dummyMail=${
-                  user.email || ''
-                }&password=${user.uid || ''}`}
+                value={`https://user-page-gx2xttfhs-ume099s-projects.vercel.app/createUser/firstLogIn?dummyMail=${
+                  user.email ? user.email.replace('+', '___') : ''
+                }&uid=${user.uid || ''}`}
                 size={128}
                 level={'L'}
                 includeMargin={true}
@@ -206,7 +206,7 @@ const UsersPage = () => {
                 }}
               />
               <a
-                href={`http://localhost:8080/createUser/firstLogIn?dummyMail=${
+                href={`https://user-page-gx2xttfhs-ume099s-projects.vercel.app/createUser/firstLogIn?dummyMail=${
                   user.email ? user.email.replace('+', '___') : ''
                 }&uid=${user.uid || ''}`}
               >
