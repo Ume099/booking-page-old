@@ -4,7 +4,6 @@ import Select from '@/components/common/parts/Select';
 import SelectObject from '@/components/common/parts/SelectObject';
 import TextArea from '@/components/common/parts/TextArea';
 import ToggleSwitch from '@/components/common/parts/ToggleSwitch';
-import RhfSubmit from '@/components/rhf/Parts';
 import { UserInfo, userInfoState } from '@/hooks/atom/userInfo';
 import {
   RIKAIDO_OBJ_LIST,
@@ -144,7 +143,7 @@ const TeachingExample: NextPage = () => {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mt-6">
-          <DatePicker label="授業日時" register={register('date')} />
+          <DatePicker withDefaultValue label="授業日時" register={register('date')} />
           <Select<string>
             label="時間"
             className="w-full"
@@ -199,7 +198,7 @@ const TeachingExample: NextPage = () => {
 
           <ToggleSwitch label="公開" register={register('isPublished')} />
         </div>
-        <RhfSubmit />
+        <input className="rounded-lg border bg-primary px-3 py-2" type="submit" />
       </form>
     </div>
   );

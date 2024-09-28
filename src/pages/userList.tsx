@@ -190,7 +190,7 @@ const UsersPage = () => {
             {/* TODO: 以下を正式なドメインに変更する */}
             <div>
               <QRCodeCanvas
-                value={`https://user-page-gx2xttfhs-ume099s-projects.vercel.app/createUser/firstLogIn?dummyMail=${
+                value={`https://www.alt-prime.com/createUser/firstLogIn?dummyMail=${
                   user.email ? user.email.replace('+', '___') : ''
                 }&uid=${user.uid || ''}`}
                 size={128}
@@ -206,7 +206,7 @@ const UsersPage = () => {
                 }}
               />
               <a
-                href={`https://user-page-gx2xttfhs-ume099s-projects.vercel.app/createUser/firstLogIn?dummyMail=${
+                href={`https://www.alt-prime.com/createUser/firstLogIn?dummyMail=${
                   user.email ? user.email.replace('+', '___') : ''
                 }&uid=${user.uid || ''}`}
               >
