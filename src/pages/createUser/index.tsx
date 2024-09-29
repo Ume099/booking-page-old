@@ -458,9 +458,8 @@ export const Page = () => {
     initializer();
     await postUserData();
 
-    console.log('setBooking will starts');
     await setBooking();
-    // reset();
+    reset();
   };
 
   return (
