@@ -3,15 +3,25 @@ import RequiredChip from '@/components/common/parts/RequiredChip';
 import { UseFormRegisterReturn } from 'react-hook-form';
 
 type InputProps = {
+  id?: string | undefined;
   label?: string;
   isRequired?: boolean;
   placeholder?: string;
   className?: string;
   register?: UseFormRegisterReturn<any>;
+  defaultValue?: any;
 };
 
 const Input = (props: InputProps): JSX.Element => {
-  const { label, isRequired, placeholder = '', className, register } = props;
+  const {
+    label = '',
+    isRequired,
+    placeholder = '',
+    className = '',
+    register,
+    id = 'none',
+    defaultValue,
+  } = props;
 
   return (
     <div className="mb-4 flex w-full flex-col items-start gap-2">
@@ -23,8 +33,9 @@ const Input = (props: InputProps): JSX.Element => {
       <div className="w-full">
         <div className="w-full">
           <input
-            id={label}
+            id={id}
             {...register}
+            value={defaultValue}
             placeholder={placeholder}
             className={`text-md w-full rounded border border-gray-300 px-1 py-1 ${className}`}
           />
