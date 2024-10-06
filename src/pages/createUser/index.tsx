@@ -24,10 +24,11 @@ import {
   STUDENT_CLASSIFICATION_LIST,
   SUBJECT_LIST,
 } from '@/lib/userSettings';
+import { generateRandomString } from '@/lib/util/createUser';
 import { useToast } from '@chakra-ui/react';
 import axios from 'axios';
 import { FirebaseError } from 'firebase/app';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 
 import { SubmitHandler, useForm } from 'react-hook-form';
 
@@ -51,17 +52,6 @@ export const Page = () => {
     formState: { errors },
   } = useForm<InputType>();
 
-  // ランダムな文字を生成する関数(文字数) => string
-  const generateRandomString = (length: number): string => {
-    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  };
-
   // この関数はコンポーネントが最初にマウントされた時に一回だけ実行されます
   const initializeMail = (uid: string) => {
     const DUMMY_EMAIL_HEAD = 'test+';
@@ -71,8 +61,8 @@ export const Page = () => {
     setEmail(DUMMY_EMAIL);
   };
 
+  // ユーザーidを生成する関数
   const initializer = () => {
-    // uidを生成
     const uidParams = generateRandomString(12);
 
     setUid(uidParams);
@@ -85,10 +75,7 @@ export const Page = () => {
   }, []);
 
   // アカウント作成
-  const createAccount = async () => {
-    console.log('createAccount>>>>>>>>>>>>>>>>>');
-    setIsLoading(true);
-    let error = false;
+  const createAccount = async (data: InputType) => {
     try {
       const response = await fetch('/api/userActions/createUser', {
         method: 'POST',
@@ -99,51 +86,19 @@ export const Page = () => {
           uid,
           email,
           password,
-          displayName: watch('familyName') + watch('givenName'),
+          displayName: data.studentName,
         }),
       });
-    } catch (e) {
-      if (e instanceof FirebaseError) {
-        console.log(e);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        console.log('createAccount(),/api/userActions/createUser', error);
       }
-      error = true;
-    } finally {
-      setIsLoading(false);
-    }
-    if (!error) {
-      toast({ title: `${watch('familyName') + watch('givenName')}の生徒情報を追加しました。` });
+      setError(true);
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const selectedPrefectre: string = watch('schoolToDoHuKen');
-      if (selectedPrefectre && selectedPrefectre !== '-') {
-        const prefectureCode = PREFECTURES.indexOf(selectedPrefectre);
-        try {
-          const response = await fetch(`/api/cities?prefCode=${prefectureCode}`);
-          const cities = await response.json();
-
-          const cityList = cities.map((cityInfo: any) => cityInfo.cityName);
-          setCityList(cityList);
-        } catch (error) {
-          console.error('Error fetching cities:', error);
-          toast({
-            title: 'エラーが発生しました。' + String(error),
-            status: 'error',
-            position: 'top',
-          });
-        }
-      }
-    };
-
-    fetchData();
-  }, [watch('schoolToDoHuKen')]);
-
   // DBにユーザー情報を登録し、成功したらユーザー作成、する関数
   const postUserData = async (data: InputType) => {
-    console.log('postUserData>>>>>>>>>>>>>>>>>');
-    setIsLoading(true);
     try {
       setError(false);
       const response = await fetch('/api/userActions/setStudentInfo', {
@@ -156,27 +111,17 @@ export const Page = () => {
           uid,
         }),
       });
-    } catch (e) {
+    } catch (error) {
       setError(true);
-      if (e instanceof FirebaseError) {
+      if (error instanceof FirebaseError) {
+        console.log('ostUserData(), /api/userActions/setStudentInfo', error);
         toast({
-          title: 'エラーが発生しました。' + String(e),
+          title: 'エラーが発生しました。' + String(error),
           status: 'error',
           position: 'top',
         });
       }
-    } finally {
-      if (error) {
-        console.error("couldn't create account");
-        return;
-      }
-
-      await createAccount();
-      setIsLoading(false);
-      // reset();
     }
-
-    setError(false);
   };
 
   // 予約状況を更新する関数
@@ -200,15 +145,8 @@ export const Page = () => {
           newVal,
         }),
       });
-
-      const result = await response.json();
-      if (result.success) {
-        console.log('Document updated successfully');
-      } else {
-        console.error('Failed:updateClass(), /api/booking/updateClass', result.message);
-      }
     } catch (error) {
-      console.error('Error calling API:', error);
+      console.error('Failed:updateClass(), /api/booking/updateClass', error);
     }
   };
 
@@ -319,22 +257,21 @@ export const Page = () => {
 
   // 特定の日の予約状況を取得する関数
   const getBookingStatus = async (year: number, month: number, day: number) => {
-    const startDay = String(watch('classStardDate'));
     try {
       const response = await axios.get('/api/booking/fetchSeatMap', {
         params: { collectionName: `openDay_${year}_${month}`, docId: `day_${day}` },
       });
       setBookingStatus(getBookingStatusObj(response.data._fieldsProto));
     } catch (error) {
-      console.log(error);
+      console.log('/api/booking/fetchSeatMap', 'getBookingStatus()', error);
     }
   };
 
-  const setBooking = async () => {
-    console.log('setBooking was executed');
-    const startDay = String(watch('classStardDate'));
-    const defaultDay = String(watch('defaultDay')).split('曜日')[0];
-    const defaultClass = String(watch('defaultClass'));
+  // 予約をセットする
+  const setBooking = async (data: InputType) => {
+    const startDay = String(data.classStardDate);
+    const defaultDay = data.defaultDay.split('曜日')[0];
+    const defaultClass = data.defaultClass;
 
     if (!defaultDay || !defaultClass) {
       return; // 何もしない
@@ -406,15 +343,19 @@ export const Page = () => {
   };
 
   const onSubmit: SubmitHandler<InputType> = async (data) => {
-    if (!watch('givenName') || !watch('familyName')) {
+    if (!data.studentName) {
       toast({ title: '必須事項が入力されていません。', status: 'error', position: 'bottom' });
       return; // 何もしない
     }
 
     initializer();
-    await postUserData();
+    await postUserData(data);
+    if (error) return; //何もしない
 
-    await setBooking();
+    await createAccount(data);
+
+    if (error) return; //何もしない
+    await setBooking(data);
     reset();
   };
 
@@ -424,32 +365,15 @@ export const Page = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <SettingHeading label="生徒情報の設定" className="mb-4 text-4xl" />
           <SettingHeading label="生徒の名前" />
-          <div className="flex w-full justify-center gap-x-2">
-            <Input label="氏" isRequired className="w-full" register={register('familyName')} />
-            <Input label="名" isRequired className="w-full" register={register('givenName')} />
-          </div>
-          <div className="flex w-full justify-center gap-x-2">
-            <Input
-              label="氏（フリガナ）"
-              className="w-full"
-              register={register('familyNameFurigana')}
-            />
-            <Input
-              label="名（フリガナ）"
-              className="w-full"
-              register={register('givenNameFurigana')}
-            />
-          </div>
+
+          <Input label="名" isRequired className="w-full" register={register('studentName')} />
+          <Input
+            label="氏（フリガナ）"
+            className="w-full"
+            register={register('studentNameFurigana')}
+          />
 
           <p className="mt-4">表示される名前</p>
-          <div className="mb-8 mt-3 grid grid-cols-3 rounded-lg border p-4">
-            <p>氏名：</p>
-            <p className="text-2xl">{watch('familyName')}</p>
-            <p className="text-2xl">{watch('givenName')}</p>
-            <p>フリガナ：</p>
-            <p className="text-lg">{watch('familyNameFurigana')}</p>
-            <p className="text-lg">{watch('givenNameFurigana')}</p>
-          </div>
 
           <Select<string>
             optionList={CURRENT_GRADE_LIST}
@@ -572,26 +496,13 @@ export const Page = () => {
           />
 
           <SettingHeading label="保護者情報" />
-          <div className="flex w-full justify-center gap-x-2">
-            <Input label="保護者：氏" className="w-full" register={register('guardianGivenName')} />
-            <Input
-              label="保護者：名"
-              className="w-full"
-              register={register('guradianFamilyName')}
-            />
-          </div>
-          <div className="flex w-full justify-center gap-x-2">
-            <Input
-              label="保護者：氏（フリガナ）"
-              className="w-full"
-              register={register('guardianGivenNameFurigana')}
-            />
-            <Input
-              label="保護者：名（フリガナ）"
-              className="w-full"
-              register={register('guradianFamilyNameFurigana')}
-            />
-          </div>
+
+          <Input label="保護者：名" className="w-full" register={register('guardianName')} />
+          <Input
+            label="保護者：氏（フリガナ）"
+            className="w-full"
+            register={register('guardianNameFurigana')}
+          />
           <Input label="勤務先" className="w-full" register={register('workPlace')} />
           <Input label="勤務先電話番号" className="w-full" register={register('workPhoneNumber')} />
           <Input label="緊急連絡先" className="w-full" register={register('emergencyContact')} />

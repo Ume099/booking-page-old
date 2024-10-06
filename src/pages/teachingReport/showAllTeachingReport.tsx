@@ -1,3 +1,4 @@
+import ButtonOriginal from '@/components/common/parts/ButtonOriginal';
 import { UserInfo, userInfoState } from '@/hooks/atom/userInfo';
 import { useToast } from '@chakra-ui/react';
 import axios from 'axios';
@@ -5,12 +6,6 @@ import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import useSWR from 'swr';
-
-type ReportObj = {
-  stageName: string;
-  topic: string;
-  detail: string;
-};
 
 type FirestoreTimestamp = {
   _seconds: number;
@@ -54,13 +49,22 @@ const ShowTeachingReport: NextPage = () => {
   const [reportList, setReportList] = useState<TeachingReport[]>([]);
   const toast = useToast();
 
-  // useSWRを使ってテンプレートデータをフェッチ
+  // useSWRを使ってテンプレートデータをフェッチ;
   const { data: reportObj = DEFAULT_REPORT_OBJ, error: templateError } = useSWR<TeachingReport[]>(
     '/api/teachingReport/fetchAllTeachingReport',
     fetcher,
   );
 
+  const test = async () => {
+    try {
+      const res = axios.get('/api/teachingReport/fetchAllTeachingReport');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
+    if (!reportObj) return;
     if (reportObj) {
       const filteredReports = reportObj;
       setReportList(filteredReports);
@@ -107,6 +111,7 @@ const ShowTeachingReport: NextPage = () => {
           )}
         </div>
       </div>
+      <ButtonOriginal label="test" onClick={() => test()} />
     </div>
   );
 };

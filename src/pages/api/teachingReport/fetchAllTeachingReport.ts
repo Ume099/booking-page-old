@@ -8,9 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // `studentUid` フィールドが指定された `studentUid` と等しいドキュメントを取得
     const querySnapshot = await db.collection('teaching-report').get();
-
     if (querySnapshot.empty) {
       res.status(404).json({ message: 'Document not found' });
       return;

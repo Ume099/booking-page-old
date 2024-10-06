@@ -13,10 +13,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const {
     uid,
-    familyName,
-    givenName,
-    familyNameFurigana,
-    givenNameFurigana,
+    studentName,
+    studentNameFurigana,
     currentGrade,
     defaultDay,
     defaultClass,
