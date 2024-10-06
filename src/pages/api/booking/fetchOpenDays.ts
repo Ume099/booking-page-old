@@ -1,5 +1,5 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { db } from '@/lib/firebase/firebase-admin';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { collectionName } = req.query;
   if (!collectionName) {
-    res.status(400).json({ message: 'collectionName is Missing', error: error.message });
+    res.status(400).json({ message: 'collectionName is Missing' });
   }
 
   try {

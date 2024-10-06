@@ -8,9 +8,9 @@ import {
   FIREBASE_STORAGE_BUCKET,
 } from '@/constant/env';
 
-import { getFirestore } from 'firebase/firestore';
 import { getApp, getApps, initializeApp } from 'firebase/app'; // TODO: Add SDKs for Firebase products that you want to use
 import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration

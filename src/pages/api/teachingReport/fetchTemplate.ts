@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const docRef = db.collection('teaching-report-templete').doc(String(docId));
+    const docRef = db.collection('teaching-report-template').doc(String(docId));
     const item = await docRef.get();
 
     if (!item.exists) {

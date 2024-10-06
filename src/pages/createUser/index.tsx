@@ -141,7 +141,7 @@ export const Page = () => {
   }, [watch('schoolToDoHuKen')]);
 
   // DBにユーザー情報を登録し、成功したらユーザー作成、する関数
-  const postUserData = async () => {
+  const postUserData = async (data: InputType) => {
     console.log('postUserData>>>>>>>>>>>>>>>>>');
     setIsLoading(true);
     try {
@@ -152,51 +152,8 @@ export const Page = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          ...data,
           uid,
-          familyName: watch('familyName'),
-          givenName: watch('givenName'),
-          familyNameFurigana: watch('familyNameFurigana'),
-          givenNameFurigana: watch('givenNameFurigana'),
-          currentGrade: watch('currentGrade'),
-          defaultDay: watch('defaultDay'),
-          defaultClass: watch('defaultClass'),
-          studentClassification: watch('studentClassification'),
-          gender: watch('gender'),
-          birthYear: watch('birthYear'),
-          birthMonth: watch('birthMonth'),
-          birthDate: watch('birthDate'),
-          mainPhoneHolder: watch('mainPhoneHolder'),
-          mainPhoneNumber: watch('mainPhoneNumber'),
-          subPhoneHolder: watch('subPhoneHolder'),
-          subPhoneNumber: watch('subPhoneNumber'),
-          zipCode: watch('zipCode'),
-          toDoHuKen: watch('toDoHuKen'),
-          toBanchi: watch('toBanchi'),
-          buildingInfo: watch('buildingInfo'),
-          broOrSisUid: watch('broOrSisUid'),
-          guardianGivenName: watch('guardianGivenName'),
-          guradianFamilyName: watch('guradianFamilyName'),
-          guardianGivenNameFurigana: watch('guardianGivenNameFurigana'),
-          guradianFamilyNameFurigana: watch('guradianFamilyNameFurigana'),
-          workPlace: watch('workPlace'),
-          workPhoneNumber: watch('workPhoneNumber'),
-          emergencyContact: watch('emergencyContact'),
-          emergencyPhoneNumber: watch('emergencyPhoneNumber'),
-          teacher: watch('teacher') || '', // Optional field
-          NgTeacher: watch('NgTeacher') || '', // Optional field
-          subjects: watch('subjects'),
-          ability: watch('ability'),
-          schoolDivision: watch('schoolDivision'),
-          schoolToDoHuKen: watch('schoolToDoHuKen'),
-          schoolCity: watch('schoolCity'),
-          schoolName: watch('schoolName'),
-          period: watch('period'),
-          group: watch('group'),
-          payment: watch('payment'),
-          note: watch('note'),
-          joinDate: watch('joinDate'),
-          classStardDate: watch('classStardDate'),
-          exitDate: watch('exitDate'),
         }),
       });
     } catch (e) {
@@ -230,7 +187,6 @@ export const Page = () => {
     fieldName: string,
     newVal: string[],
   ) => {
-    console.log('>>>>>>>>>>>>>>>>>>>>>updateClass');
     try {
       const response = await fetch('/api/booking/updateClass', {
         method: 'POST',
@@ -249,7 +205,7 @@ export const Page = () => {
       if (result.success) {
         console.log('Document updated successfully');
       } else {
-        console.error('Failed to update document:', result.message);
+        console.error('Failed:updateClass(), /api/booking/updateClass', result.message);
       }
     } catch (error) {
       console.error('Error calling API:', error);

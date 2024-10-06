@@ -1,11 +1,10 @@
+import { ServiceAccount } from '@/lib/firebase/firebase-admin';
 import admin from 'firebase-admin';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-const serviceAccount = require('firebase-serviceAccount.json');
-
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert(ServiceAccount),
   });
 }
 
@@ -26,6 +25,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     res.status(200).json({ uid: userRecord.uid });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 }

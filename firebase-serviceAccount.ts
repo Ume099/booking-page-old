@@ -13,8 +13,6 @@ const serviceAccount = {
   client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL || '',
 };
 
-console.log('test2>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', process.env.FIREBASE_PRIVATE_KEY_ID);
-
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
