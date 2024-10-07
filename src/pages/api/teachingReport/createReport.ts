@@ -69,8 +69,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     !studentName ||
     !writer ||
     !writerUid ||
-    !rikaido ||
-    !comment
+    !rikaido
   ) {
     return res.status(400).json({ success: false, message: 'Invalid request data' });
   }

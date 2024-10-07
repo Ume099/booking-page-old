@@ -89,6 +89,9 @@ export const Page = () => {
           displayName: data.studentName,
         }),
       });
+      if (response.status !== 200 && response.status !== 304) {
+        throw error;
+      }
     } catch (error) {
       if (error instanceof FirebaseError) {
         console.log('createAccount(),/api/userActions/createUser', error);
@@ -111,12 +114,21 @@ export const Page = () => {
           uid,
         }),
       });
-    } catch (error) {
+      if (response.status !== 200 && response.status !== 304) {
+        throw error;
+      }
+    } catch (e) {
+      console.log('ostUserData(), /api/userActions/setStudentInfo', error);
       setError(true);
-      if (error instanceof FirebaseError) {
-        console.log('ostUserData(), /api/userActions/setStudentInfo', error);
+      if (e instanceof FirebaseError) {
         toast({
-          title: 'エラーが発生しました。' + String(error),
+          title: 'firebaseエラーが発生しました。' + String(e),
+          status: 'error',
+          position: 'top',
+        });
+      } else {
+        toast({
+          title: '原因不明のエラーが発生しました。',
           status: 'error',
           position: 'top',
         });
@@ -145,6 +157,9 @@ export const Page = () => {
           newVal,
         }),
       });
+      if (response.status !== 200 && response.status !== 304) {
+        throw error;
+      }
     } catch (error) {
       console.error('Failed:updateClass(), /api/booking/updateClass', error);
     }
@@ -199,12 +214,8 @@ export const Page = () => {
           newValue,
         }),
       });
-
-      const result = await response.json();
-      if (result.success) {
-        console.log('Document updated successfully');
-      } else {
-        console.error('Failed to update document:', result.message);
+      if (response.status !== 200 && response.status !== 304) {
+        throw error;
       }
     } catch (error) {
       console.error('Error calling API:', error);
@@ -212,7 +223,6 @@ export const Page = () => {
   };
 
   const getAllOpenDates = async (year: number, month: number) => {
-    console.log('getAllOpenDates>>>>>>>>>>>', year, month);
     setDateList([]);
     setIsLoading(true);
 
@@ -227,6 +237,9 @@ export const Page = () => {
         const response = await axios.get('/api/booking/fetchOpenDays', {
           params: { collectionName },
         });
+        if (response.status !== 200 && response.status !== 304) {
+          throw error;
+        }
 
         const dates = response.data.map((fields: any) => fields._fieldsProto.date?.integerValue);
 
@@ -267,7 +280,7 @@ export const Page = () => {
     }
   };
 
-  // 予約をセットする
+  // 予約をセットする関数
   const setBooking = async (data: InputType) => {
     const startDay = String(data.classStardDate);
     const defaultDay = data.defaultDay.split('曜日')[0];
@@ -342,20 +355,40 @@ export const Page = () => {
     }
   };
 
+  const resetFormStatus = () => {
+    setError(false);
+    setIsLoading(false);
+  };
+
   const onSubmit: SubmitHandler<InputType> = async (data) => {
+    setIsLoading(true);
     if (!data.studentName) {
       toast({ title: '必須事項が入力されていません。', status: 'error', position: 'bottom' });
+      setIsLoading(false);
       return; // 何もしない
     }
 
     initializer();
     await postUserData(data);
-    if (error) return; //何もしない
+
+    if (error) {
+      resetFormStatus();
+      return;
+    }
 
     await createAccount(data);
 
-    if (error) return; //何もしない
+    if (error) {
+      resetFormStatus();
+      return;
+    }
+
     await setBooking(data);
+
+    if (error) {
+      resetFormStatus();
+      return;
+    }
     reset();
   };
 
@@ -366,9 +399,9 @@ export const Page = () => {
           <SettingHeading label="生徒情報の設定" className="mb-4 text-4xl" />
           <SettingHeading label="生徒の名前" />
 
-          <Input label="名" isRequired className="w-full" register={register('studentName')} />
+          <Input label="氏名" isRequired className="w-full" register={register('studentName')} />
           <Input
-            label="氏（フリガナ）"
+            label="氏名（フリガナ）"
             className="w-full"
             register={register('studentNameFurigana')}
           />

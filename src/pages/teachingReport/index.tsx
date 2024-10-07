@@ -79,22 +79,21 @@ const TeachingExample: NextPage = () => {
     fetcher,
   );
 
-  const getPostData = (): TeachingReportData => {
-    const data: TeachingReportData = {
-      date: watch('date'),
-      classTime: watch('classTime'),
+  const getPostData = (data: TeachingReportTemplateInputType): TeachingReportData => {
+    return {
+      date: data.date,
+      classTime: data.classTime,
       stage: reportObj.stageName,
       topic: reportObj.topic,
-      detail: reportObj.detail,
-      studentUid: watch('studentUid'),
+      detail: reportObj.detail + data.behavior || '',
+      studentUid: data.studentUid,
       studentName: String((users && users[1].displayName) || ''),
       writer: userInfo.userName || 'なし',
       writerUid: userInfo.uid,
-      rikaido: watch('rikaido'),
-      comment: watch('comment') || 'なし',
+      rikaido: data.rikaido,
+      comment: data.comment || 'なし',
       isPublished: false,
     };
-    return data;
   };
 
   const createTeachingReport = async (data: TeachingReportData) => {
@@ -114,8 +113,8 @@ const TeachingExample: NextPage = () => {
   };
 
   // 提出の関数
-  const onSubmit = () => {
-    if (!watch('stage') || !watch('date')) {
+  const onSubmit = (data: TeachingReportTemplateInputType) => {
+    if (!data.stage || !data.date) {
       toast({
         title: '必要事項を選択してください。',
         status: 'error',
@@ -123,7 +122,7 @@ const TeachingExample: NextPage = () => {
       });
       return;
     }
-    createTeachingReport(getPostData());
+    createTeachingReport(getPostData(data));
     reset();
   };
 
