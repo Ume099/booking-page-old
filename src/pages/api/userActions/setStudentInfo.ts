@@ -65,7 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const docRef = db.collection(COLLECTION_NAME).doc(uid);
     const insertData = {
       AUTHORITY: 'student',
-      studentName,
+      studentName, //必須項目
       studentNameFurigana: studentNameFurigana || '',
       currentGrade: currentGrade || '',
       defaultDay: defaultDay || '',

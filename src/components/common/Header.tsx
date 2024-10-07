@@ -171,6 +171,7 @@ const Header: React.FC = () => {
                           alt="プライム"
                         />
                       </Link>
+                      <span>{userInfo && String(userInfo.userName) + 'としてログイン中'}</span>
                     </div>
                   </li>
                 </ul>
