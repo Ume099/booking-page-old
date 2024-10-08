@@ -41,7 +41,7 @@ export const Page = () => {
   const [dateList, setDateList] = useState<any[]>([]);
   const [error, setError] = useState<boolean>(false);
 
-  const [bookingStatus, setBookingStatus] = useState<BookingStatusObjReturn>();
+  let bookingStatus: BookingStatusObjReturn | null;
 
   const toast = useToast();
   const {
@@ -274,8 +274,8 @@ export const Page = () => {
       const response = await axios.get('/api/booking/fetchSeatMap', {
         params: { collectionName: `openDay_${year}_${month}`, docId: `day_${day}` },
       });
-      setBookingStatus(getBookingStatusObj(response.data._fieldsProto));
-      console.log(getBookingStatusObj(response.data._fieldsProto));
+      bookingStatus = getBookingStatusObj(response.data._fieldsProto);
+      console.log('setBookingStatus>>', bookingStatus);
     } catch (error) {
       console.log('/api/booking/fetchSeatMap', 'getBookingStatus()', error);
     }
@@ -293,16 +293,16 @@ export const Page = () => {
 
     await getAllOpenDates(Number(startDay.split('-')[0]), Number(startDay.split('-')[1]));
 
-    for (let n of dateList) {
-      if (!n.dates) {
+    for (let date of dateList) {
+      if (!date.dates) {
         console.log('n.dates is missing');
         return; // 何もしない
       }
 
-      for (let m of n.dates) {
-        console.log(n.year, n.month, m, getDayOfWeek(n.year, n.month, m), defaultDay);
-        if (getDayOfWeek(n.year, n.month, m) === defaultDay) {
-          await getBookingStatus(n.year, n.month, m);
+      for (let m of date.dates) {
+        console.log(date.year, date.month, m, getDayOfWeek(date.year, date.month, m), defaultDay);
+        if (getDayOfWeek(date.year, date.month, m) === defaultDay) {
+          await getBookingStatus(date.year, date.month, m);
 
           const additionalVal = uid;
           let newVal: string[];
@@ -311,27 +311,29 @@ export const Page = () => {
             return; // 何もしない
           }
 
+          console.log(bookingStatus, '<<<<bookingStatus');
+
           switch (defaultClass) {
             case 'class1':
-              newVal = bookingStatus.class1;
+              newVal = bookingStatus.class1.filter((val) => val !== '');
               break;
             case 'class2':
-              newVal = bookingStatus.class2;
+              newVal = bookingStatus.class2.filter((val) => val !== '');
               break;
             case 'class3':
-              newVal = bookingStatus.class3;
+              newVal = bookingStatus.class3.filter((val) => val !== '');
               break;
             case 'class4':
-              newVal = bookingStatus.class4;
+              newVal = bookingStatus.class4.filter((val) => val !== '');
               break;
             case 'class5':
-              newVal = bookingStatus.class5;
+              newVal = bookingStatus.class5.filter((val) => val !== '');
               break;
             case 'class6':
-              newVal = bookingStatus.class6;
+              newVal = bookingStatus.class6.filter((val) => val !== '');
               break;
             case 'class7':
-              newVal = bookingStatus.class7;
+              newVal = bookingStatus.class7.filter((val) => val !== '');
               break;
             default:
               console.log('default');
@@ -341,14 +343,13 @@ export const Page = () => {
           if ((!newVal && !additionalVal) || newVal[0] === 'default') {
             console.log('newVal is missing');
             return; // 何もしない
-          } else {
-            console.log('continues');
           }
 
           newVal = [...newVal, additionalVal];
+          console.log('newVal', newVal);
 
           // 取得した開校日の基本曜日の基本時間にuidを追加
-          await updateClass(n.year, n.month, m, defaultClass, newVal);
+          await updateClass(date.year, date.month, m, defaultClass, newVal);
 
           await updateStandardSeatMap(defaultDay, defaultClass, newVal);
         }
@@ -362,9 +363,11 @@ export const Page = () => {
   };
 
   const onSubmit: SubmitHandler<InputType> = async (data) => {
-    getBookingStatus(2025, 1, 12);
-
-    return;
+    bookingStatus = null;
+    if (bookingStatus) {
+      console.log('bookingStatus is not null');
+      return;
+    }
     setIsLoading(true);
     if (!data.studentName) {
       toast({ title: '必須事項が入力されていません。', status: 'error', position: 'bottom' });
@@ -389,11 +392,8 @@ export const Page = () => {
 
     await setBooking(data);
 
-    if (error) {
-      resetFormStatus();
-      return;
-    }
-    reset();
+    resetFormStatus();
+    //reset();
   };
 
   return (
@@ -472,7 +472,11 @@ export const Page = () => {
           <DatePicker label="授業開始日" withDefaultValue register={register('classStardDate')} />
           <DatePicker label="退会日" register={register('exitDate')} />
           <p>授業開始日と退会日は記録用です。生徒削除は「生徒管理」ページから行えます。</p>
-          <input className="rounded-lg border bg-primary px-3 py-2" type="submit" />
+          <input
+            disabled={isLoading}
+            className={`rounded-lg border bg-primary px-3 py-2 ${isLoading && 'opacity-40'}`}
+            type="submit"
+          />
           {uid}
 
           <SettingHeading label="保護者の連絡先" />
@@ -607,7 +611,11 @@ export const Page = () => {
           />
 
           <TextArea label="備考" register={register('note')} />
-          <input className="rounded-lg border bg-primary px-3 py-2" type="submit" />
+          <input
+            disabled={isLoading}
+            className={`rounded-lg border bg-primary px-3 py-2 ${isLoading && 'opacity-40'}`}
+            type="submit"
+          />
         </form>
       </div>
     </div>
