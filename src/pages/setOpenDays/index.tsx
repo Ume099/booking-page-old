@@ -35,9 +35,6 @@ export default function setOpenDays() {
   const [errorMonth, setErrorMonth] = useState('');
   const [monthOnDisplay, setmonthOnDisplay] = useState(currentMonth + 1);
 
-  const [isBookingCancelOpen, setIsBookingCancelOpen] = useState(false);
-  const [currentEditDate, setCurrentEditDate] = useState<Number | null>(null);
-
   // 編集する月を設定する関数
   const setMonth = (num: number) => {
     setmonthOnDisplay(num);
@@ -70,18 +67,6 @@ export default function setOpenDays() {
       setErrorMonth('過去の情報は取得できません。');
     }
     setYearOnDisplay((prev) => prev - 1);
-  };
-
-  // 既存予約をクリックすると開くモーダル。変更後の開校日を選択すると変更できる。
-  const openBookingCancel = (num: Number) => {
-    setCurrentEditDate(num);
-    setIsBookingCancelOpen(true);
-  };
-
-  // 開校日で未予約日を選択すると、変更元の予約が選択できるようになるモーダル。
-  const closeBookingCancel = () => {
-    setCurrentEditDate(null);
-    setIsBookingCancelOpen(false);
   };
 
   return (

@@ -27,29 +27,54 @@ const DaysToSetOpen = ({ year, month, setOpenDay }: DaysProps) => {
   const daysInMonth = firstDayOfMonth.daysInMonth();
   const [standardSeatMapSat, setStandardSeatMapSat] =
     useState<GetFormattedStandardClassMapReturn>();
+  const [standardSeatMapSun, setStandardSeatMapSun] =
+    useState<GetFormattedStandardClassMapReturn>();
 
   // 座席表を取得する
-  const fetchSeatMap = async (day: string) => {
-    console.log(day);
+  const fetchSeatMapSat = async () => {
     try {
       const response = await axios.get('/api/fetchFireStore', {
-        params: { collectionName: 'standardSeatMap', docId: day.toLowerCase() },
+        params: { collectionName: 'standardSeatMap', docId: 'sat' },
       });
 
-      console.log(getFormattedStandardClassMap(response.data));
       setStandardSeatMapSat(getFormattedStandardClassMap(response.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const fetchSeatMapSun = async () => {
+    try {
+      const response = await axios.get('/api/fetchFireStore', {
+        params: { collectionName: 'standardSeatMap', docId: 'sun' },
+      });
+
+      setStandardSeatMapSun(getFormattedStandardClassMap(response.data));
     } catch (error) {
       console.log(error);
     }
   };
 
   // 開校日を追加する関数
-  const addOpenDays = async (collectionName: string, dataObj: any) => {
+  const addOpenDays = async (collectionName: string, dataObj: any, day: number) => {
+    if (!standardSeatMapSat || !standardSeatMapSun) {
+      throw Error;
+    }
+    let newSeatMapObj: GetFormattedStandardClassMapReturn;
+    switch (getDayOfWeekEng(year, month, day).toLowerCase()) {
+      case 'sat':
+        newSeatMapObj = standardSeatMapSat;
+        break;
+      case 'sun':
+        newSeatMapObj = standardSeatMapSun;
+        break;
+      default:
+        return;
+    }
     try {
       const response = await fetch('/api/booking/addOpenDays', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ collectionName, ...dataObj, ...standardSeatMapSat }),
+        body: JSON.stringify({ collectionName, ...dataObj, ...newSeatMapObj }),
       });
       if (response.ok) {
         console.log('Document added successfully');
@@ -65,9 +90,7 @@ const DaysToSetOpen = ({ year, month, setOpenDay }: DaysProps) => {
 
   const handleAddOpenDate = async (day: number) => {
     // ここにstandardSeatMapを取得する関数を追加
-    await fetchSeatMap(getDayOfWeekEng(year, month, day));
     //if (!confirm('開校日を追加しますか?')) return;
-    // return;
 
     const collectionName = 'openDay_' + year + '_' + month;
     const date = new Date(year, month - 1, day);
@@ -75,7 +98,7 @@ const DaysToSetOpen = ({ year, month, setOpenDay }: DaysProps) => {
 
     const dataObj: any = { date: day, dayOfWeek };
 
-    await addOpenDays(collectionName, dataObj);
+    await addOpenDays(collectionName, dataObj, day);
   };
   const handleDeleteOpenDate = async (day: number) => {
     // confirm('開校日を削除しますか?');
@@ -125,6 +148,11 @@ const DaysToSetOpen = ({ year, month, setOpenDay }: DaysProps) => {
     getOpenDayInfo();
     // 年と月が設定されたら再度fetch
   }, [year, month]);
+
+  useEffect(() => {
+    fetchSeatMapSat();
+    fetchSeatMapSun();
+  }, []);
 
   const days = [];
   for (let day = 0; day < startDay; day++) {
