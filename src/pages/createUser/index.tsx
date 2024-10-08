@@ -275,6 +275,7 @@ export const Page = () => {
         params: { collectionName: `openDay_${year}_${month}`, docId: `day_${day}` },
       });
       setBookingStatus(getBookingStatusObj(response.data._fieldsProto));
+      console.log(getBookingStatusObj(response.data._fieldsProto));
     } catch (error) {
       console.log('/api/booking/fetchSeatMap', 'getBookingStatus()', error);
     }
@@ -361,6 +362,9 @@ export const Page = () => {
   };
 
   const onSubmit: SubmitHandler<InputType> = async (data) => {
+    getBookingStatus(2025, 1, 12);
+
+    return;
     setIsLoading(true);
     if (!data.studentName) {
       toast({ title: '必須事項が入力されていません。', status: 'error', position: 'bottom' });

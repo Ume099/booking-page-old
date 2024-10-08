@@ -50,11 +50,11 @@ export const linkList = [
   },
   {
     name: '座席表',
-    link: '/seat-map',
+    link: '/seatMap',
   },
   {
     name: 'setOpenDays',
-    link: '/set-open-days',
+    link: '/setOpenDays',
   },
   {
     name: 'apiTest',

@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { collectionName, docId } = req.query;
   if (!collectionName || !docId) {
-    res.status(400).json({ message: 'collectionName is Missing', error: error.message });
+    res.status(400).json({ message: 'collectionName is Missing' });
   }
 
   try {

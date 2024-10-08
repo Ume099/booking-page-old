@@ -1,11 +1,16 @@
 // components/Days.tsx
 
 import ButtonOriginal from '@/components/common/parts/ButtonOriginal';
-import { CLASS_NAME } from '@/lib/classInfo';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { IoReloadCircleOutline } from 'react-icons/io5';
 
+import {
+  DAY_ENGLISH,
+  getDayOfWeekEng,
+  getFormattedStandardClassMap,
+  GetFormattedStandardClassMapReturn,
+} from '@/lib/date';
 import axios from 'axios';
 
 type DaysProps = {
@@ -13,51 +18,38 @@ type DaysProps = {
   month: number;
   setOpenDay: (day: number) => void;
 };
-
-type DataObj = {
-  date: number;
-  dayOfWeek: string;
-  remainingSeatClass1: number;
-  remainingSeatClass2: number;
-  remainingSeatClass3: number;
-  remainingSeatClass4: number;
-  remainingSeatClass5: number;
-  remainingSeatClass6: number;
-  remainingSeatClass7: number;
-};
-
-const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const today = dayjs();
 
 const DaysToSetOpen = ({ year, month, setOpenDay }: DaysProps) => {
   const [openDaysObjList, setOpenDaysObjList] = useState([]);
-  const today = dayjs();
   const firstDayOfMonth = dayjs(new Date(year, month - 1, 1));
   const startDay = firstDayOfMonth.day();
   const daysInMonth = firstDayOfMonth.daysInMonth();
+  const [standardSeatMapSat, setStandardSeatMapSat] =
+    useState<GetFormattedStandardClassMapReturn>();
 
-  const handleAddOpenDate = async (day: number) => {
-    //if (!confirm('開校日を追加しますか?')) return;
+  // 座席表を取得する
+  const fetchSeatMap = async (day: string) => {
+    console.log(day);
+    try {
+      const response = await axios.get('/api/fetchFireStore', {
+        params: { collectionName: 'standardSeatMap', docId: day.toLowerCase() },
+      });
 
-    const collectionName = 'openDay_' + year + '_' + month;
-    const date = new Date(year, month - 1, day);
-    const dayOfWeek = daysOfWeek[date.getDay()];
+      console.log(getFormattedStandardClassMap(response.data));
+      setStandardSeatMapSat(getFormattedStandardClassMap(response.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    const dataObj: any = { date: day, dayOfWeek };
-
-    CLASS_NAME.forEach((time, index) => {
-      const key = time;
-      // 土曜日の場合、
-      dataObj[key] =
-        (time === 'class1' || time === 'class2') && dayOfWeek === 'Sat'
-          ? ['']
-          : ['', '', '', '', ''];
-    });
-
+  // 開校日を追加する関数
+  const addOpenDays = async (collectionName: string, dataObj: any) => {
     try {
       const response = await fetch('/api/booking/addOpenDays', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ collectionName, ...dataObj }),
+        body: JSON.stringify({ collectionName, ...dataObj, ...standardSeatMapSat }),
       });
       if (response.ok) {
         console.log('Document added successfully');
@@ -69,6 +61,21 @@ const DaysToSetOpen = ({ year, month, setOpenDay }: DaysProps) => {
     } finally {
       getOpenDayInfo();
     }
+  };
+
+  const handleAddOpenDate = async (day: number) => {
+    // ここにstandardSeatMapを取得する関数を追加
+    await fetchSeatMap(getDayOfWeekEng(year, month, day));
+    //if (!confirm('開校日を追加しますか?')) return;
+    // return;
+
+    const collectionName = 'openDay_' + year + '_' + month;
+    const date = new Date(year, month - 1, day);
+    const dayOfWeek = DAY_ENGLISH[date.getDay()];
+
+    const dataObj: any = { date: day, dayOfWeek };
+
+    await addOpenDays(collectionName, dataObj);
   };
   const handleDeleteOpenDate = async (day: number) => {
     // confirm('開校日を削除しますか?');
