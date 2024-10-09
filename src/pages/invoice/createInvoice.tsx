@@ -56,8 +56,13 @@ export const Page = () => {
           dueDate: data.dueDate.replaceAll('-', '_'),
           fullName: data.fullName,
           payment: data.payment,
-          items: data.items,
-          totalPrice: 8800,
+          // 以下のようにしないと全部Stringになる
+          items: data.items.map((item) => ({
+            komoku: item.komoku,
+            detail: item.detail,
+            price: Number(item.price),
+          })),
+          totalPrice: data.totalPrice,
         }),
       });
     } catch (e) {
@@ -138,6 +143,7 @@ export const Page = () => {
             />
           )}
           <InputRadio
+            checkedIndex={1}
             label="支払方法"
             className="w-full"
             register={register('payment')}
