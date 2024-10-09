@@ -55,8 +55,11 @@ interface User {
 }
 
 export class UserList {
+  list: { providerData: any }[];
   constructor(userInfo: any) {
-    this.list = userInfo.map((data = { ...data.providerData }));
+    this.list = userInfo.map((data: { providerData: any }) => {
+      data.providerData;
+    });
   }
 }
 
@@ -123,11 +126,14 @@ type StringValue = {
 };
 
 export type StudentClassInfoAll = {
+  studentName: StringValue;
+  studentNameFurigana: StringValue;
+  guardianName: StringValue;
+  guardianNameFurigana: StringValue;
   zipCode: StringValue;
   schoolCity: StringValue;
   note: StringValue;
   gender: StringValue;
-  guradianFamilyNameFurigana: StringValue;
   mainPhoneHolder: StringValue;
   mainPhoneNumber: StringValue;
   emergencyPhoneNumber: StringValue;
@@ -137,12 +143,10 @@ export type StudentClassInfoAll = {
   NgTeacher: StringValue;
   toBanchi: StringValue;
   workPhoneNumber: StringValue;
-  familyName: StringValue;
   defaultClass: StringValue;
   payment: StringValue;
   subPhoneHolder: StringValue;
   ability: StringValue;
-  guardianGivenNameFurigana: StringValue;
   schoolName: StringValue;
   workPlace: StringValue;
   exitDate: StringValue;
@@ -153,9 +157,7 @@ export type StudentClassInfoAll = {
   subPhoneNumber: StringValue;
   emergencyContact: StringValue;
   subjects: ArrayValue;
-  givenName: StringValue;
   defaultDay: StringValue;
-  familyNameFurigana: StringValue;
   birthDate: StringValue;
   givenNameFurigana: StringValue;
   buildingInfo: StringValue;
@@ -165,7 +167,6 @@ export type StudentClassInfoAll = {
   guradianFamilyName: StringValue;
   birthYear: StringValue;
   broOrSisUid: StringValue;
-  guardianGivenName: StringValue;
   schoolToDoHuKen: StringValue;
   classStardDate: StringValue;
 };
@@ -175,7 +176,8 @@ export type StudentClassInfoAllReturn = {
   schoolCity: string;
   note: string;
   gender: string;
-  guradianFamilyNameFurigana: string;
+  guardianName: string;
+  guardianNameFurigana: string;
   mainPhoneHolder: string;
   mainPhoneNumber: string;
   emergencyPhoneNumber: string;
@@ -185,12 +187,10 @@ export type StudentClassInfoAllReturn = {
   NgTeacher: string;
   toBanchi: string;
   workPhoneNumber: string;
-  familyName: string;
   defaultClass: string;
   payment: string;
   subPhoneHolder: string;
   ability: string;
-  guardianGivenNameFurigana: string;
   schoolName: string;
   workPlace: string;
   exitDate: string;
@@ -201,19 +201,15 @@ export type StudentClassInfoAllReturn = {
   subPhoneNumber: string;
   emergencyContact: string;
   subjects: string[];
-  givenName: string;
   defaultDay: string;
-  familyNameFurigana: string;
   birthDate: string;
   givenNameFurigana: string;
   buildingInfo: string;
   AUTHORITY: string;
   birthMonth: string;
   schoolDivision: string;
-  guradianFamilyName: string;
   birthYear: string;
   broOrSisUid: string;
-  guardianGivenName: string;
   schoolToDoHuKen: string;
   classStardDate: string;
 };
@@ -227,7 +223,6 @@ export const fetchStudentClassInfoResponse = (
     schoolCity: obj.schoolCity.stringValue,
     note: obj.note.stringValue,
     gender: obj.gender.stringValue,
-    guradianFamilyNameFurigana: obj.guradianFamilyNameFurigana.stringValue,
     mainPhoneHolder: obj.mainPhoneHolder.stringValue,
     mainPhoneNumber: obj.mainPhoneNumber.stringValue,
     emergencyPhoneNumber: obj.emergencyPhoneNumber.stringValue,
@@ -237,12 +232,12 @@ export const fetchStudentClassInfoResponse = (
     NgTeacher: obj.NgTeacher.stringValue,
     toBanchi: obj.toBanchi.stringValue,
     workPhoneNumber: obj.workPhoneNumber.stringValue,
-    familyName: obj.familyName.stringValue,
+    studentName: obj.studentName.stringValue,
     defaultClass: obj.defaultClass.stringValue,
     payment: obj.payment.stringValue,
     subPhoneHolder: obj.subPhoneHolder.stringValue,
     ability: obj.ability.stringValue,
-    guardianGivenNameFurigana: obj.guardianGivenNameFurigana.stringValue,
+    guardianNameFurigana: obj.guardianNameFurigana.stringValue,
     schoolName: obj.schoolName.stringValue,
     workPlace: obj.workPlace.stringValue,
     exitDate: obj.exitDate.stringValue,
@@ -253,19 +248,17 @@ export const fetchStudentClassInfoResponse = (
     subPhoneNumber: obj.subPhoneNumber.stringValue,
     emergencyContact: obj.emergencyContact.stringValue,
     subjects: obj.subjects.arrayValue.values,
-    givenName: obj.givenName.stringValue,
     defaultDay: obj.defaultDay.stringValue,
-    familyNameFurigana: obj.familyNameFurigana.stringValue,
+    studentNameFurigana: obj.studentNameFurigana.stringValue,
     birthDate: obj.birthDate.stringValue,
     givenNameFurigana: obj.givenNameFurigana.stringValue,
     buildingInfo: obj.buildingInfo.stringValue,
     AUTHORITY: obj.AUTHORITY.stringValue,
     birthMonth: obj.birthMonth.stringValue,
     schoolDivision: obj.schoolDivision.stringValue,
-    guradianFamilyName: obj.guradianFamilyName.stringValue,
+    guardianName: obj.guardianName.stringValue,
     birthYear: obj.birthYear.stringValue,
     broOrSisUid: obj.broOrSisUid.stringValue,
-    guardianGivenName: obj.guardianGivenName.stringValue,
     schoolToDoHuKen: obj.schoolToDoHuKen.stringValue,
     classStardDate: obj.classStardDate.stringValue,
   };
@@ -363,10 +356,8 @@ export const PERIOD_OBJ_LIST = [
 export const PAYMENT_LIST = ['選択なし', '銀行振込', 'クレジットカード', '口座振り込み', '月謝'];
 
 export type InputType = {
-  familyName: string;
-  givenName: string;
-  familyNameFurigana: string;
-  givenNameFurigana: string;
+  studentName: string;
+  studentNameFurigana: string;
   currentGrade: keyof typeof CURRENT_GRADE_LIST;
   defaultDay: string;
   defaultClass: string;
@@ -384,10 +375,8 @@ export type InputType = {
   toBanchi: string;
   buildingInfo: string;
   broOrSisUid: string;
-  guardianGivenName: string;
-  guradianFamilyName: string;
-  guardianGivenNameFurigana: string;
-  guradianFamilyNameFurigana: string;
+  guradianName: string;
+  guradianNameFurigana: string;
   workPlace: string;
   workPhoneNumber: JapanPhoneNumber;
   emergencyContact: string;
@@ -404,6 +393,8 @@ export type InputType = {
   group: string;
   payment: keyof typeof PAYMENT_LIST;
   note: string;
+  guardianName: string;
+  guardianNameFurigana: string;
   joinDate: Date;
   classStardDate: Date;
   exitDate: Date;

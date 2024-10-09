@@ -2,6 +2,7 @@ import { UserInfo, userInfoState } from '@/hooks/atom/userInfo';
 import { useToast } from '@chakra-ui/react';
 import axios from 'axios';
 import { NextPage } from 'next';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import useSWR from 'swr';
@@ -59,12 +60,12 @@ const ShowTeachingReport: NextPage = () => {
   const toast = useToast();
 
   // useSWRを使ってテンプレートデータをフェッチ
-  const { data: reportObj = DEFAULT_REPORT_OBJ, error: templateError } =
-    userInfo.uid &&
-    useSWR<TeachingReport[]>(
-      `/api/teachingReport/fetchTeachingReport?collectionName=teaching-report&studentUid=${userInfo.uid}`,
-      fetcher,
-    );
+  const { data: reportObj = DEFAULT_REPORT_OBJ, error: templateError } = useSWR<TeachingReport[]>(
+    userInfo.uid
+      ? `/api/teachingReport/fetchTeachingReport?collectionName=teaching-report&studentUid=${userInfo.uid}`
+      : null,
+    fetcher,
+  );
 
   useEffect(() => {
     if (reportObj && userInfo.uid) {
@@ -88,26 +89,55 @@ const ShowTeachingReport: NextPage = () => {
     }
   }, [templateError]);
 
+  const getStarImage = (points: String): string => {
+    switch (points) {
+      case '1':
+        return '/teachingReport/st1.png';
+      case '2':
+        return '/teachingReport/st2.png';
+      case '3':
+        return '/teachingReport/st3.png';
+      case '4':
+        return '/teachingReport/st4.png';
+      case '5':
+        return '/teachingReport/st5.png';
+      case '6':
+        return '/teachingReport/st6.png';
+      case '7':
+        return '/teachingReport/st7.png';
+      case '8':
+        return '/teachingReport/st8.png';
+      case '9':
+        return '/teachingReport/st9.png';
+      case '10':
+        return '/teachingReport/st10.png';
+      default:
+        return '';
+    }
+  };
+
   return (
-    <div className="mx-12 mt-24 max-w-4xl items-center">
+    <div className="mx-12 max-w-4xl items-center">
       {/* ユーザーデータの表示 */}
       <div className="mt-6">
-        <h2 className="font-bold">指導報告書</h2>
+        <h2 className="mb-8 text-4xl font-bold">指導報告書</h2>
 
-        <div className="mt-4 font-bold">指導報告書の内容</div>
         <div className="border p-2">
           {/* reportListの表示 */}
           {reportList.length > 0 ? (
             reportList.map((report) => (
               <div key={report.id} className="border-b py-2">
-                <p className="font-bold">〇授業時間</p>
+                <p className="text-xl font-bold">〇授業時間</p>
                 <p className="mb-4">{report.classTime || ''}</p>
-                <p className="mb-4">{report.rikaido || ''}</p>
-                <p className="font-bold">〇ステージ</p>
-                <p className="mb-4">{report.stage}</p>
-                <p className="font-bold">〇内容</p>
-                <p className="mb-4">{report.topic}</p>
-                <p className="font-bold">授業の詳細</p>
+                <p className="mb-2 text-xl  font-bold">〇理解度</p>
+                <div className="mb-4">
+                  <Image src={getStarImage(report.rikaido)} alt="pt1" width={248} height={128} />
+                </div>
+                <p className="text-xl font-bold">〇ステージ</p>
+                <p className="mb-4 text-lg">{report.stage}</p>
+                <p className="text-xl font-bold">〇内容</p>
+                <p className="mb-4 text-lg">{report.topic}</p>
+                <p className="text-xl font-bold">授業の詳細</p>
                 <p className="mb-4">{report.detail}</p>
               </div>
             ))

@@ -24,10 +24,11 @@ import {
   STUDENT_CLASSIFICATION_LIST,
   SUBJECT_LIST,
 } from '@/lib/userSettings';
+import { generateRandomString } from '@/lib/util/createUser';
 import { useToast } from '@chakra-ui/react';
 import axios from 'axios';
 import { FirebaseError } from 'firebase/app';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 
 import { SubmitHandler, useForm } from 'react-hook-form';
 
@@ -40,7 +41,7 @@ export const Page = () => {
   const [dateList, setDateList] = useState<any[]>([]);
   const [error, setError] = useState<boolean>(false);
 
-  const [bookingStatus, setBookingStatus] = useState<BookingStatusObjReturn>();
+  let bookingStatus: BookingStatusObjReturn | null;
 
   const toast = useToast();
   const {
@@ -51,17 +52,6 @@ export const Page = () => {
     formState: { errors },
   } = useForm<InputType>();
 
-  // ランダムな文字を生成する関数(文字数) => string
-  const generateRandomString = (length: number): string => {
-    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  };
-
   // この関数はコンポーネントが最初にマウントされた時に一回だけ実行されます
   const initializeMail = (uid: string) => {
     const DUMMY_EMAIL_HEAD = 'test+';
@@ -71,8 +61,8 @@ export const Page = () => {
     setEmail(DUMMY_EMAIL);
   };
 
+  // ユーザーidを生成する関数
   const initializer = () => {
-    // uidを生成
     const uidParams = generateRandomString(12);
 
     setUid(uidParams);
@@ -85,10 +75,7 @@ export const Page = () => {
   }, []);
 
   // アカウント作成
-  const createAccount = async () => {
-    console.log('createAccount>>>>>>>>>>>>>>>>>');
-    setIsLoading(true);
-    let error = false;
+  const createAccount = async (data: InputType) => {
     try {
       const response = await fetch('/api/userActions/createUser', {
         method: 'POST',
@@ -99,51 +86,22 @@ export const Page = () => {
           uid,
           email,
           password,
-          displayName: watch('familyName') + watch('givenName'),
+          displayName: data.studentName,
         }),
       });
-    } catch (e) {
-      if (e instanceof FirebaseError) {
-        console.log(e);
+      if (response.status !== 200 && response.status !== 304) {
+        throw error;
       }
-      error = true;
-    } finally {
-      setIsLoading(false);
-    }
-    if (!error) {
-      toast({ title: `${watch('familyName') + watch('givenName')}の生徒情報を追加しました。` });
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        console.log('createAccount(),/api/userActions/createUser', error);
+      }
+      setError(true);
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const selectedPrefectre: string = watch('schoolToDoHuKen');
-      if (selectedPrefectre && selectedPrefectre !== '-') {
-        const prefectureCode = PREFECTURES.indexOf(selectedPrefectre);
-        try {
-          const response = await fetch(`/api/cities?prefCode=${prefectureCode}`);
-          const cities = await response.json();
-
-          const cityList = cities.map((cityInfo: any) => cityInfo.cityName);
-          setCityList(cityList);
-        } catch (error) {
-          console.error('Error fetching cities:', error);
-          toast({
-            title: 'エラーが発生しました。' + String(error),
-            status: 'error',
-            position: 'top',
-          });
-        }
-      }
-    };
-
-    fetchData();
-  }, [watch('schoolToDoHuKen')]);
-
   // DBにユーザー情報を登録し、成功したらユーザー作成、する関数
   const postUserData = async (data: InputType) => {
-    console.log('postUserData>>>>>>>>>>>>>>>>>');
-    setIsLoading(true);
     try {
       setError(false);
       const response = await fetch('/api/userActions/setStudentInfo', {
@@ -156,27 +114,26 @@ export const Page = () => {
           uid,
         }),
       });
+      if (response.status !== 200 && response.status !== 304) {
+        throw error;
+      }
     } catch (e) {
+      console.log('ostUserData(), /api/userActions/setStudentInfo', error);
       setError(true);
       if (e instanceof FirebaseError) {
         toast({
-          title: 'エラーが発生しました。' + String(e),
+          title: 'firebaseエラーが発生しました。' + String(e),
+          status: 'error',
+          position: 'top',
+        });
+      } else {
+        toast({
+          title: '原因不明のエラーが発生しました。',
           status: 'error',
           position: 'top',
         });
       }
-    } finally {
-      if (error) {
-        console.error("couldn't create account");
-        return;
-      }
-
-      await createAccount();
-      setIsLoading(false);
-      // reset();
     }
-
-    setError(false);
   };
 
   // 予約状況を更新する関数
@@ -200,15 +157,11 @@ export const Page = () => {
           newVal,
         }),
       });
-
-      const result = await response.json();
-      if (result.success) {
-        console.log('Document updated successfully');
-      } else {
-        console.error('Failed:updateClass(), /api/booking/updateClass', result.message);
+      if (response.status !== 200 && response.status !== 304) {
+        throw error;
       }
     } catch (error) {
-      console.error('Error calling API:', error);
+      console.error('Failed:updateClass(), /api/booking/updateClass', error);
     }
   };
 
@@ -261,12 +214,8 @@ export const Page = () => {
           newValue,
         }),
       });
-
-      const result = await response.json();
-      if (result.success) {
-        console.log('Document updated successfully');
-      } else {
-        console.error('Failed to update document:', result.message);
+      if (response.status !== 200 && response.status !== 304) {
+        throw error;
       }
     } catch (error) {
       console.error('Error calling API:', error);
@@ -274,7 +223,6 @@ export const Page = () => {
   };
 
   const getAllOpenDates = async (year: number, month: number) => {
-    console.log('getAllOpenDates>>>>>>>>>>>', year, month);
     setDateList([]);
     setIsLoading(true);
 
@@ -289,6 +237,9 @@ export const Page = () => {
         const response = await axios.get('/api/booking/fetchOpenDays', {
           params: { collectionName },
         });
+        if (response.status !== 200 && response.status !== 304) {
+          throw error;
+        }
 
         const dates = response.data.map((fields: any) => fields._fieldsProto.date?.integerValue);
 
@@ -319,22 +270,22 @@ export const Page = () => {
 
   // 特定の日の予約状況を取得する関数
   const getBookingStatus = async (year: number, month: number, day: number) => {
-    const startDay = String(watch('classStardDate'));
     try {
       const response = await axios.get('/api/booking/fetchSeatMap', {
         params: { collectionName: `openDay_${year}_${month}`, docId: `day_${day}` },
       });
-      setBookingStatus(getBookingStatusObj(response.data._fieldsProto));
+      bookingStatus = getBookingStatusObj(response.data._fieldsProto);
+      console.log('setBookingStatus>>', bookingStatus);
     } catch (error) {
-      console.log(error);
+      console.log('/api/booking/fetchSeatMap', 'getBookingStatus()', error);
     }
   };
 
-  const setBooking = async () => {
-    console.log('setBooking was executed');
-    const startDay = String(watch('classStardDate'));
-    const defaultDay = String(watch('defaultDay')).split('曜日')[0];
-    const defaultClass = String(watch('defaultClass'));
+  // 予約をセットする関数
+  const setBooking = async (data: InputType) => {
+    const startDay = String(data.classStardDate);
+    const defaultDay = data.defaultDay.split('曜日')[0];
+    const defaultClass = data.defaultClass;
 
     if (!defaultDay || !defaultClass) {
       return; // 何もしない
@@ -342,16 +293,16 @@ export const Page = () => {
 
     await getAllOpenDates(Number(startDay.split('-')[0]), Number(startDay.split('-')[1]));
 
-    for (let n of dateList) {
-      if (!n.dates) {
+    for (let date of dateList) {
+      if (!date.dates) {
         console.log('n.dates is missing');
         return; // 何もしない
       }
 
-      for (let m of n.dates) {
-        console.log(n.year, n.month, m, getDayOfWeek(n.year, n.month, m), defaultDay);
-        if (getDayOfWeek(n.year, n.month, m) === defaultDay) {
-          await getBookingStatus(n.year, n.month, m);
+      for (let m of date.dates) {
+        console.log(date.year, date.month, m, getDayOfWeek(date.year, date.month, m), defaultDay);
+        if (getDayOfWeek(date.year, date.month, m) === defaultDay) {
+          await getBookingStatus(date.year, date.month, m);
 
           const additionalVal = uid;
           let newVal: string[];
@@ -360,27 +311,29 @@ export const Page = () => {
             return; // 何もしない
           }
 
+          console.log(bookingStatus, '<<<<bookingStatus');
+
           switch (defaultClass) {
             case 'class1':
-              newVal = bookingStatus.class1;
+              newVal = bookingStatus.class1.filter((val) => val !== '');
               break;
             case 'class2':
-              newVal = bookingStatus.class2;
+              newVal = bookingStatus.class2.filter((val) => val !== '');
               break;
             case 'class3':
-              newVal = bookingStatus.class3;
+              newVal = bookingStatus.class3.filter((val) => val !== '');
               break;
             case 'class4':
-              newVal = bookingStatus.class4;
+              newVal = bookingStatus.class4.filter((val) => val !== '');
               break;
             case 'class5':
-              newVal = bookingStatus.class5;
+              newVal = bookingStatus.class5.filter((val) => val !== '');
               break;
             case 'class6':
-              newVal = bookingStatus.class6;
+              newVal = bookingStatus.class6.filter((val) => val !== '');
               break;
             case 'class7':
-              newVal = bookingStatus.class7;
+              newVal = bookingStatus.class7.filter((val) => val !== '');
               break;
             default:
               console.log('default');
@@ -390,14 +343,13 @@ export const Page = () => {
           if ((!newVal && !additionalVal) || newVal[0] === 'default') {
             console.log('newVal is missing');
             return; // 何もしない
-          } else {
-            console.log('continues');
           }
 
           newVal = [...newVal, additionalVal];
+          console.log('newVal', newVal);
 
           // 取得した開校日の基本曜日の基本時間にuidを追加
-          await updateClass(n.year, n.month, m, defaultClass, newVal);
+          await updateClass(date.year, date.month, m, defaultClass, newVal);
 
           await updateStandardSeatMap(defaultDay, defaultClass, newVal);
         }
@@ -405,17 +357,43 @@ export const Page = () => {
     }
   };
 
+  const resetFormStatus = () => {
+    setError(false);
+    setIsLoading(false);
+  };
+
   const onSubmit: SubmitHandler<InputType> = async (data) => {
-    if (!watch('givenName') || !watch('familyName')) {
+    bookingStatus = null;
+    if (bookingStatus) {
+      console.log('bookingStatus is not null');
+      return;
+    }
+    setIsLoading(true);
+    if (!data.studentName) {
       toast({ title: '必須事項が入力されていません。', status: 'error', position: 'bottom' });
+      setIsLoading(false);
       return; // 何もしない
     }
 
     initializer();
-    await postUserData();
+    await postUserData(data);
 
-    await setBooking();
-    reset();
+    if (error) {
+      resetFormStatus();
+      return;
+    }
+
+    await createAccount(data);
+
+    if (error) {
+      resetFormStatus();
+      return;
+    }
+
+    await setBooking(data);
+
+    resetFormStatus();
+    //reset();
   };
 
   return (
@@ -424,32 +402,15 @@ export const Page = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <SettingHeading label="生徒情報の設定" className="mb-4 text-4xl" />
           <SettingHeading label="生徒の名前" />
-          <div className="flex w-full justify-center gap-x-2">
-            <Input label="氏" isRequired className="w-full" register={register('familyName')} />
-            <Input label="名" isRequired className="w-full" register={register('givenName')} />
-          </div>
-          <div className="flex w-full justify-center gap-x-2">
-            <Input
-              label="氏（フリガナ）"
-              className="w-full"
-              register={register('familyNameFurigana')}
-            />
-            <Input
-              label="名（フリガナ）"
-              className="w-full"
-              register={register('givenNameFurigana')}
-            />
-          </div>
+
+          <Input label="氏名" isRequired className="w-full" register={register('studentName')} />
+          <Input
+            label="氏名（フリガナ）"
+            className="w-full"
+            register={register('studentNameFurigana')}
+          />
 
           <p className="mt-4">表示される名前</p>
-          <div className="mb-8 mt-3 grid grid-cols-3 rounded-lg border p-4">
-            <p>氏名：</p>
-            <p className="text-2xl">{watch('familyName')}</p>
-            <p className="text-2xl">{watch('givenName')}</p>
-            <p>フリガナ：</p>
-            <p className="text-lg">{watch('familyNameFurigana')}</p>
-            <p className="text-lg">{watch('givenNameFurigana')}</p>
-          </div>
 
           <Select<string>
             optionList={CURRENT_GRADE_LIST}
@@ -511,7 +472,11 @@ export const Page = () => {
           <DatePicker label="授業開始日" withDefaultValue register={register('classStardDate')} />
           <DatePicker label="退会日" register={register('exitDate')} />
           <p>授業開始日と退会日は記録用です。生徒削除は「生徒管理」ページから行えます。</p>
-          <input className="rounded-lg border bg-primary px-3 py-2" type="submit" />
+          <input
+            disabled={isLoading}
+            className={`rounded-lg border bg-primary px-3 py-2 ${isLoading && 'opacity-40'}`}
+            type="submit"
+          />
           {uid}
 
           <SettingHeading label="保護者の連絡先" />
@@ -572,26 +537,13 @@ export const Page = () => {
           />
 
           <SettingHeading label="保護者情報" />
-          <div className="flex w-full justify-center gap-x-2">
-            <Input label="保護者：氏" className="w-full" register={register('guardianGivenName')} />
-            <Input
-              label="保護者：名"
-              className="w-full"
-              register={register('guradianFamilyName')}
-            />
-          </div>
-          <div className="flex w-full justify-center gap-x-2">
-            <Input
-              label="保護者：氏（フリガナ）"
-              className="w-full"
-              register={register('guardianGivenNameFurigana')}
-            />
-            <Input
-              label="保護者：名（フリガナ）"
-              className="w-full"
-              register={register('guradianFamilyNameFurigana')}
-            />
-          </div>
+
+          <Input label="保護者：名" className="w-full" register={register('guardianName')} />
+          <Input
+            label="保護者：氏（フリガナ）"
+            className="w-full"
+            register={register('guardianNameFurigana')}
+          />
           <Input label="勤務先" className="w-full" register={register('workPlace')} />
           <Input label="勤務先電話番号" className="w-full" register={register('workPhoneNumber')} />
           <Input label="緊急連絡先" className="w-full" register={register('emergencyContact')} />
@@ -659,7 +611,11 @@ export const Page = () => {
           />
 
           <TextArea label="備考" register={register('note')} />
-          <input className="rounded-lg border bg-primary px-3 py-2" type="submit" />
+          <input
+            disabled={isLoading}
+            className={`rounded-lg border bg-primary px-3 py-2 ${isLoading && 'opacity-40'}`}
+            type="submit"
+          />
         </form>
       </div>
     </div>

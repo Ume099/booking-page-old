@@ -1,11 +1,9 @@
 import DayOfWeek from '@/components/calendar/parts/DayOfWeek';
 import DaysToSetOpen from '@/components/calendar/parts/DaysToSetOpen';
-import dayjs from 'dayjs';
 
 type Props = {
   year: number;
   month: number;
-  label?: string;
 };
 
 const setOpenDay = (day: number) => {
@@ -13,8 +11,7 @@ const setOpenDay = (day: number) => {
 };
 
 const CalenderToSetOpen = (props: Props) => {
-  const { year, month, label = '' } = props;
-  const today = dayjs();
+  const { year, month } = props;
 
   return (
     <div className="container mx-auto p-4">

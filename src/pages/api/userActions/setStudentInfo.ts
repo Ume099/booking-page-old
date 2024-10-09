@@ -13,10 +13,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const {
     uid,
-    familyName,
-    givenName,
-    familyNameFurigana,
-    givenNameFurigana,
+    studentName,
+    studentNameFurigana,
     currentGrade,
     defaultDay,
     defaultClass,
@@ -43,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     emergencyContact,
     emergencyPhoneNumber,
     teacher,
-    NgTeacher: NgTeacher,
+    NgTeacher,
     subjects,
     ability,
     schoolDivision,
@@ -67,10 +65,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const docRef = db.collection(COLLECTION_NAME).doc(uid);
     const insertData = {
       AUTHORITY: 'student',
-      familyName: familyName || '',
-      givenName: givenName || '',
-      familyNameFurigana: familyNameFurigana || '',
-      givenNameFurigana: givenNameFurigana || '',
+      studentName, //必須項目
+      studentNameFurigana: studentNameFurigana || '',
       currentGrade: currentGrade || '',
       defaultDay: defaultDay || '',
       defaultClass: defaultClass || '',
@@ -88,10 +84,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       toBanchi: toBanchi || '',
       buildingInfo: buildingInfo || '',
       broOrSisUid: broOrSisUid || '',
-      guardianGivenName: guardianGivenName || '',
-      guradianFamilyName: guradianFamilyName || '',
-      guardianGivenNameFurigana: guardianGivenNameFurigana || '',
-      guradianFamilyNameFurigana: guradianFamilyNameFurigana || '',
+      guradianName: guradianFamilyName || '',
+      guardianNameFurigana: guardianGivenNameFurigana || '',
       workPlace: workPlace || '',
       workPhoneNumber: workPhoneNumber || '',
       emergencyContact: emergencyContact || '',

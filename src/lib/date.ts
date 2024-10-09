@@ -1,3 +1,5 @@
+import { ArrayValueType } from './firebase/types';
+
 // 1~12月のリスト
 export type MONTH_NAME_TYPE =
   | '1月'
@@ -95,4 +97,174 @@ export const getClassListFormatted = (obj: ClassListApiType): string[] => {
     classList: obj.classList.arrayValue.values.map((cl) => cl.stringValue),
   };
   return Obj.classList;
+};
+
+const test = {
+  class7: {
+    arrayValue: {
+      values: [
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+      ],
+    },
+    valueType: 'arrayValue',
+  },
+  class6: {
+    arrayValue: {
+      values: [
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+      ],
+    },
+    valueType: 'arrayValue',
+  },
+  class5: {
+    arrayValue: {
+      values: [
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+      ],
+    },
+    valueType: 'arrayValue',
+  },
+  class4: {
+    arrayValue: {
+      values: [
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+      ],
+    },
+    valueType: 'arrayValue',
+  },
+  class2: {
+    arrayValue: {
+      values: [
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+      ],
+    },
+    valueType: 'arrayValue',
+  },
+  class1: {
+    arrayValue: {
+      values: [
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+      ],
+    },
+    valueType: 'arrayValue',
+  },
+  class3: {
+    arrayValue: {
+      values: [
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+        {
+          stringValue: '',
+          valueType: 'stringValue',
+        },
+      ],
+    },
+    valueType: 'arrayValue',
+  },
+};
+
+interface getFormattedStandardClassMapObj {
+  class7: ArrayValueType;
+  class6: ArrayValueType;
+  class5: ArrayValueType;
+  class4: ArrayValueType;
+  class3: ArrayValueType;
+  class2: ArrayValueType;
+  class1: ArrayValueType;
+}
+
+export type GetFormattedStandardClassMapReturn = {
+  class7: string[];
+  class6: string[];
+  class5: string[];
+  class4: string[];
+  class3: string[];
+  class2: string[];
+  class1: string[];
+};
+
+export const getFormattedStandardClassMap = (
+  obj: getFormattedStandardClassMapObj,
+): GetFormattedStandardClassMapReturn => {
+  return {
+    class1: obj.class1.arrayValue.values.map((value) => value.stringValue),
+    class2: obj.class2.arrayValue.values.map((value) => value.stringValue),
+    class3: obj.class3.arrayValue.values.map((value) => value.stringValue),
+    class4: obj.class4.arrayValue.values.map((value) => value.stringValue),
+    class5: obj.class5.arrayValue.values.map((value) => value.stringValue),
+    class6: obj.class6.arrayValue.values.map((value) => value.stringValue),
+    class7: obj.class7.arrayValue.values.map((value) => value.stringValue),
+  };
 };
