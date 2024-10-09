@@ -92,10 +92,10 @@ export const Page = () => {
   };
 
   const onSubmit: SubmitHandler<InvoiceInput> = async (data) => {
-    // if (!watch('givenName') || !watch('familyName')) {
-    //   toast({ title: '必須事項が入力されていません。', status: 'error', position: 'bottom' });
-    //   return; // 何もしない
-    // }
+    if (!data.totalPrice || !data.fullName) {
+      toast({ title: '必須事項が入力されていません。', status: 'error', position: 'bottom' });
+      return; // 何もしない
+    }
     await postInvoice(data);
     reset();
   };
