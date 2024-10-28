@@ -26,7 +26,7 @@ const TextArea = (props: InputProps): JSX.Element => {
             id={label}
             {...register}
             placeholder={placeholder}
-            className={`text-md w-full rounded border border-gray-300 px-1 py-1 ${className}`}
+            className={`text-md w-full rounded border border-gray-300 px-1 py-1 text-gray-600 ${className}`}
           />
         </div>
       </div>

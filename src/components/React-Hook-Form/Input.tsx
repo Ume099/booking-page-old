@@ -26,7 +26,7 @@ const Input: React.FC<InputProps> = ({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`rounded border p-2 ${className}`}
+        className={`rounded border p-2 text-gray-600 ${className}`}
       />
     </div>
   );

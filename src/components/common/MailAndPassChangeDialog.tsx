@@ -91,7 +91,7 @@ const MailAndPassChangeDialog = (): JSX.Element => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-md border-2 border-gray-300 px-3 py-2"
+            className="w-full rounded-md border-2 border-gray-300 px-3 py-2 text-gray-600"
           />
           <ButtonOriginal
             variant="primary"
@@ -107,7 +107,7 @@ const MailAndPassChangeDialog = (): JSX.Element => {
             type="password"
             value={userInfo.uid}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-md border-2 border-gray-300 px-3 py-2"
+            className="w-full rounded-md border-2 border-gray-300 px-3 py-2 text-gray-600"
           />
         </div>
 
@@ -117,7 +117,7 @@ const MailAndPassChangeDialog = (): JSX.Element => {
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full rounded-md border-2 border-gray-300 px-3 py-2"
+            className="w-full rounded-md border-2 border-gray-300 px-3 py-2 text-gray-600"
           />
           <ButtonOriginal
             variant="primary"

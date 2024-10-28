@@ -35,7 +35,7 @@ const CheckboxGroup = <T,>({
               type="checkbox"
               value={String(option)}
               {...register(name)}
-              className={`text-md rounded border-gray-300 ${className}`}
+              className={`text-md rounded border-gray-300 text-gray-600 ${className}`}
             />
             <span>{String(option)}</span>
           </label>

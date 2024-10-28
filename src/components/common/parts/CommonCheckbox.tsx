@@ -16,7 +16,7 @@ const CommonCheckbox = forwardRef<HTMLInputElement, CommonCheckboxProps>(
           {...inputProps}
           ref={ref}
           type="checkbox"
-          className="peer absolute left-3 top-3 h-6 w-6 cursor-pointer appearance-none rounded-md border border-gray-300 transition-all checked:border-primary checked:bg-primary"
+          className="peer absolute left-3 top-3 h-6 w-6 cursor-pointer appearance-none rounded-md border border-gray-300 text-gray-600 transition-all checked:border-primary checked:bg-primary"
         />
         <span className="absolute left-0 top-0 block h-12 w-12 rounded-full bg-gray-500 opacity-0 transition-opacity content-[''] hover:opacity-10 peer-checked:bg-primary" />
         <div className="pointer-events-none absolute left-4 top-4 text-white opacity-0 transition-opacity peer-checked:opacity-100">

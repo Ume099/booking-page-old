@@ -11,7 +11,7 @@ const CommonTextarea = forwardRef<HTMLTextAreaElement, TextProps>(
       <textarea
         {...textareaAttributes}
         ref={ref}
-        className={`rounded-lg border border-black px-6 py-3 text-base outline-none placeholder:text-gray-300 focus:border-primary sm:py-6 ${className}`}
+        className={`rounded-lg border border-black px-6 py-3 text-base text-gray-600 outline-none placeholder:text-gray-300 focus:border-primary sm:py-6 ${className}`}
       />
     );
   },

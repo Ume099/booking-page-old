@@ -23,7 +23,7 @@ const InputRadio = (props: Props): JSX.Element => {
       <div className="flex w-full gap-4">
         {options.map((option, index) => (
           <label key={index} className="flex items-center">
-            <input type="radio" value={option.value} {...register} className="radio-input" />
+            <input type="radio" value={option.value} {...register} className="radio-input text-gray-600" />
             <span>{option.label}</span>
           </label>
         ))}

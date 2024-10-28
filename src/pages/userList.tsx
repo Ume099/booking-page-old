@@ -146,7 +146,7 @@ const UsersPage = () => {
                 <Box>
                   <strong>Name:</strong>
                   <input
-                    className="ml-2 rounded-lg border-2 px-3 py-2"
+                    className="ml-2 rounded-lg border-2 px-3 py-2 text-gray-600"
                     placeholder="Enter display name"
                     onChange={(e) => handleSetUserName(user.uid, e.target.value)}
                     value={user.displayName || ''}
@@ -155,7 +155,7 @@ const UsersPage = () => {
                 <Box>
                   <strong>Email:</strong>
                   <input
-                    className="ml-2 mt-2 rounded-lg border-2 px-3 py-2"
+                    className="ml-2 mt-2 rounded-lg border-2 px-3 py-2 text-gray-600"
                     placeholder="Enter email"
                     onChange={(e) => handleSetEmail(user.uid, e.target.value)}
                     value={user.email || ''}
