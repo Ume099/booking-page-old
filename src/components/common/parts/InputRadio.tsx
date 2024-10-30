@@ -8,11 +8,10 @@ type Props = {
   isRequired?: boolean;
   className?: string;
   register?: UseFormRegisterReturn;
-  checkedIndex?: number;
 };
 
 const InputRadio = (props: Props): JSX.Element => {
-  const { label, options, isRequired, className = '', register, checkedIndex } = props;
+  const { label, options, isRequired, className = '', register } = props;
 
   return (
     <div className={`mb-4 flex flex-col items-start gap-2 ${className}`}>
@@ -24,16 +23,7 @@ const InputRadio = (props: Props): JSX.Element => {
       <div className="flex w-full gap-4">
         {options.map((option, index) => (
           <label key={index} className="flex items-center">
-            <input
-              checked={
-                (index === checkedIndex && checkedIndex === 0) ||
-                (!!checkedIndex && index === checkedIndex)
-              }
-              type="radio"
-              value={option.value}
-              {...register}
-              className="radio-input"
-            />
+            <input type="radio" value={option.value} {...register} className="radio-input" />
             <span>{option.label}</span>
           </label>
         ))}

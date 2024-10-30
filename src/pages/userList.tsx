@@ -1,5 +1,4 @@
 import ButtonOriginal from '@/components/common/parts/ButtonOriginal';
-import { Box, Container, Heading, List, ListItem } from '@chakra-ui/react';
 import axios from 'axios';
 import { QRCodeCanvas } from 'qrcode.react';
 import { useState } from 'react';
@@ -21,7 +20,6 @@ const UsersPage = () => {
   const [loadingDelete, setLoadingDelete] = useState<{ uid: string | null }>({ uid: null });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // ユーザーを削除する関数
   const deleteUser = async (uid: string) => {
     if (!window.confirm('ユーザーを削除するともとには戻せません。本当に削除しますか？')) return;
 
@@ -36,7 +34,7 @@ const UsersPage = () => {
       });
       await removeUidFromAllClasses(uid);
       await removeUidFromSeatMap(uid);
-      await mutate(); // ユーザー削除後に再フェッチしてリストを更新
+      await mutate();
     } catch (e) {
       console.error(e);
       setErrorMessage('Failed to delete user');
@@ -50,8 +48,6 @@ const UsersPage = () => {
       const response = await axios.post('/api/booking/deleteUidFromAllOpenDays', { uid });
       if (response.status === 200) {
         console.log(`Successfully removed UID ${uid} from all classes.`);
-      } else {
-        console.error(`Failed to remove UID ${uid}. Status: ${response.status}`);
       }
     } catch (error) {
       console.error('Error removing UID from classes:', error);
@@ -63,15 +59,12 @@ const UsersPage = () => {
       const response = await axios.post('/api/booking/deleteUidFromSeatMap', { uid });
       if (response.status === 200) {
         console.log(`Successfully removed UID ${uid} from seat map.`);
-      } else {
-        console.error(`Failed to remove UID ${uid}. Status: ${response.status}`);
       }
     } catch (error) {
       console.error('Error removing UID from seat map:', error);
     }
   };
 
-  // usersStateのdisplayNameに入力値をセットする関数
   const handleSetUserName = (uid: string, newValue: string) => {
     mutate(
       (prevUsers) =>
@@ -81,7 +74,6 @@ const UsersPage = () => {
     );
   };
 
-  // usersStateのemailに入力値をセットする関数
   const handleSetEmail = (uid: string, newValue: string) => {
     mutate(
       (prevUsers) =>
@@ -98,8 +90,8 @@ const UsersPage = () => {
         uid: uid,
         newEmail: user?.email || '',
       });
-      setErrorMessage(null); // エラーをクリア
-      await mutate(); // データの更新後に再フェッチ
+      setErrorMessage(null);
+      await mutate();
     } catch (e) {
       console.error(e);
       setErrorMessage('Failed to update email');
@@ -108,7 +100,6 @@ const UsersPage = () => {
     }
   };
 
-  // displayNameを更新する関数
   const updateUserDisplayName = async (uid: string) => {
     setLoading({ uid });
     try {
@@ -117,8 +108,8 @@ const UsersPage = () => {
         uid: uid,
         displayName: user?.displayName || '',
       });
-      setErrorMessage(null); // エラーをクリア
-      await mutate(); // データの更新後に再フェッチ
+      setErrorMessage(null);
+      await mutate();
     } catch (e) {
       console.error(e);
       setErrorMessage('Failed to update user');
@@ -128,7 +119,7 @@ const UsersPage = () => {
   };
 
   if (error) {
-    return <div>Failed to load users</div>;
+    return <div className="text-red-500">Failed to load users</div>;
   }
 
   if (!users) {
@@ -136,35 +127,35 @@ const UsersPage = () => {
   }
 
   return (
-    <Container py={14}>
-      <Heading mb={6}>Users List</Heading>
-      <List spacing={3}>
+    <div className="container mx-auto py-14">
+      <h1 className="mb-6 text-2xl font-bold">Users List</h1>
+      <ul className="space-y-3">
         {users.map((user) => (
-          <ListItem key={user.uid} borderWidth="1px" borderRadius="lg" p={4}>
-            <div className="flex justify-between">
+          <li key={user.uid} className="flex justify-between rounded-lg border border-gray-300 p-4">
+            <div>
               <div>
-                <Box>
-                  <strong>Name:</strong>
-                  <input
-                    className="ml-2 rounded-lg border-2 px-3 py-2"
-                    placeholder="Enter display name"
-                    onChange={(e) => handleSetUserName(user.uid, e.target.value)}
-                    value={user.displayName || ''}
-                  />
-                </Box>
-                <Box>
-                  <strong>Email:</strong>
-                  <input
-                    className="ml-2 mt-2 rounded-lg border-2 px-3 py-2"
-                    placeholder="Enter email"
-                    onChange={(e) => handleSetEmail(user.uid, e.target.value)}
-                    value={user.email || ''}
-                  />
-                </Box>
-                <Box>
-                  <strong>ID:</strong> {user.uid}
-                </Box>
+                <strong>Name:</strong>
+                <input
+                  className="ml-2 rounded-lg border-2 border-gray-300 px-3 py-2 text-black"
+                  placeholder="Enter display name"
+                  onChange={(e) => handleSetUserName(user.uid, e.target.value)}
+                  value={user.displayName || ''}
+                />
               </div>
+              <div>
+                <strong>Email:</strong>
+                <input
+                  className="ml-2 mt-2 rounded-lg border-2 border-gray-300 px-3 py-2 text-black"
+                  placeholder="Enter email"
+                  onChange={(e) => handleSetEmail(user.uid, e.target.value)}
+                  value={user.email || ''}
+                />
+              </div>
+              <div>
+                <strong>ID:</strong> {user.uid}
+              </div>
+            </div>
+            <div className="ml-4 flex items-center">
               <ButtonOriginal
                 onClick={() => updateUserDisplayName(user.uid)}
                 variant="secondary"
@@ -187,8 +178,7 @@ const UsersPage = () => {
                 loading={loadingDelete.uid === user.uid}
               />
             </div>
-            {/* TODO: 以下を正式なドメインに変更する */}
-            <div>
+            <div className="mt-4">
               <QRCodeCanvas
                 value={`https://www.alt-prime.com/createUser/firstLogIn?dummyMail=${
                   user.email ? user.email.replace('+', '___') : ''
@@ -206,6 +196,7 @@ const UsersPage = () => {
                 }}
               />
               <a
+                className="text-blue-500 underline"
                 href={`https://www.alt-prime.com/createUser/firstLogIn?dummyMail=${
                   user.email ? user.email.replace('+', '___') : ''
                 }&uid=${user.uid || ''}`}
@@ -213,10 +204,10 @@ const UsersPage = () => {
                 LINK
               </a>
             </div>
-          </ListItem>
+          </li>
         ))}
-      </List>
-    </Container>
+      </ul>
+    </div>
   );
 };
 

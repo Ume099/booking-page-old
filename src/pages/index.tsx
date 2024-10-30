@@ -33,7 +33,7 @@ const Home: NextPage = () => {
             <Link
               href={link.link}
               key={index}
-              className="mx-12 mb-12 mt-6 flex rounded-md border bg-yellow-100 px-3 py-2"
+              className="mx-12 mb-12 mt-6 flex rounded-md border bg-yellow-100 px-3 py-2 text-black"
             >
               {link.name}
             </Link>

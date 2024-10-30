@@ -179,3 +179,8 @@ body .articles-blogs h1 {
   width: 100% !important;
   height: auto;
 }
+
+input,
+select {
+  color: black;
+}

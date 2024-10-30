@@ -118,6 +118,7 @@ export const Page = () => {
         throw error;
       }
     } catch (e) {
+      setError(true);
       console.log('ostUserData(), /api/userActions/setStudentInfo', error);
       setError(true);
       if (e instanceof FirebaseError) {
@@ -393,7 +394,7 @@ export const Page = () => {
     await setBooking(data);
 
     resetFormStatus();
-    //reset();
+    reset();
   };
 
   return (
@@ -409,8 +410,6 @@ export const Page = () => {
             className="w-full"
             register={register('studentNameFurigana')}
           />
-
-          <p className="mt-4">表示される名前</p>
 
           <Select<string>
             optionList={CURRENT_GRADE_LIST}

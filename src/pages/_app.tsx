@@ -16,7 +16,7 @@ initializeFirebaseApp();
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
-    <>
+    <div className="bg-gray-800 text-white">
       <GoogleTagManager googleTagManagerId={googleTagManagerId} />
       <RecoilRoot>
         <ChakraProvider>
@@ -30,7 +30,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
           </AuthProvider>
         </ChakraProvider>
       </RecoilRoot>
-    </>
+    </div>
   );
 }
 export default MyApp;
