@@ -11,7 +11,7 @@ const InputClass = (props: Props): JSX.Element => {
       <label className="flex shrink-0 items-start justify-start gap-2 md:justify-between">
         <span className="text-base">{label}</span>
       </label>
-      <input placeholder={defaultVal} className="w-full rounded-lg border-2 px-3 py-2" />
+      <input placeholder={defaultVal} className="w-full rounded-lg border-2 px-3 py-2 text-gray-600" />
     </div>
   );
 };

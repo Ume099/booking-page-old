@@ -24,6 +24,7 @@ const InputRadio = (props: Props): JSX.Element => {
       <div className="flex w-full gap-4">
         {options.map((option, index) => (
           <label key={index} className="flex items-center">
+
             <input
               checked={
                 (index === checkedIndex && checkedIndex === 0) ||

@@ -37,7 +37,7 @@ const Input = (props: InputProps): JSX.Element => {
             {...register}
             value={defaultValue}
             placeholder={placeholder}
-            className={`text-md w-full rounded border border-gray-300 px-1 py-1 ${className}`}
+            className={`text-md w-full rounded border border-gray-300 px-1 py-1 text-gray-600 ${className}`}
           />
         </div>
       </div>

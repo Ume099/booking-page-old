@@ -31,7 +31,7 @@ const Select = <T,>({
           <select
             defaultValue={String(optionList[selectedIndex || 0])}
             {...register}
-            className={`text-md w-full rounded border border-gray-300 px-1 py-1 ${className}`}
+            className={`text-md w-full rounded border border-gray-300 px-1 py-1 text-gray-600 ${className}`}
           >
             {optionList.map((option, index) => (
               <option key={String(option) + index} value={String(option)}>

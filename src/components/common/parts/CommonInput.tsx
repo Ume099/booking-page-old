@@ -11,7 +11,7 @@ const CommonInput = forwardRef<HTMLInputElement, InputProps>(
       <input
         {...inputAttributes}
         ref={ref}
-        className={`rounded-lg border border-black p-6 py-3 text-base outline-none placeholder:text-gray-300 focus:border-primary ${className}`}
+        className={`rounded-lg border border-black p-6 py-3 text-base text-gray-600 outline-none placeholder:text-gray-300 focus:border-primary ${className}`}
       />
     );
   },
