@@ -43,6 +43,10 @@ const UsersPage = () => {
     }
   };
 
+  const removeFromAllClassesWithUid = async (uid: string) => {
+    await removeUidFromAllClasses(uid);
+  };
+
   const removeUidFromAllClasses = async (uid: string) => {
     try {
       const response = await axios.post('/api/booking/deleteUidFromAllOpenDays', { uid });
@@ -50,6 +54,7 @@ const UsersPage = () => {
         console.log(`Successfully removed UID ${uid} from all classes.`);
       }
     } catch (error) {
+      console.log('fails');
       console.error('Error removing UID from classes:', error);
     }
   };
@@ -207,6 +212,11 @@ const UsersPage = () => {
           </li>
         ))}
       </ul>
+      <ButtonOriginal
+        variant="primary"
+        label="削除"
+        onClick={() => removeFromAllClassesWithUid('2auqq4rx23m2')}
+      />
     </div>
   );
 };

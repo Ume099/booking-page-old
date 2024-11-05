@@ -181,6 +181,7 @@ body .articles-blogs h1 {
 }
 
 input,
-select {
+select,
+textarea {
   color: black;
 }

@@ -285,7 +285,7 @@ export const Page = () => {
   // 予約をセットする関数
   const setBooking = async (data: InputType) => {
     const startDay = String(data.classStardDate);
-    const defaultDay = data.defaultDay.split('曜日')[0];
+    const defaultDay = data.defaultDay.split('曜日')[0]; // 曜日を「土」「日」などに変換
     const defaultClass = data.defaultClass;
 
     if (!defaultDay || !defaultClass) {

@@ -1,4 +1,5 @@
 import { auth } from '@/lib/firebase/firebase-admin';
+import { FirebaseError } from 'firebase/app';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -18,6 +19,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(200).json(users);
   } catch (error) {
     console.error('Error listing users:', error);
-    res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    if (error instanceof FirebaseError) {
+      res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    } else {
+      res.status(503).json({ message: 'Internal Server Error' });
+    }
   }
 }

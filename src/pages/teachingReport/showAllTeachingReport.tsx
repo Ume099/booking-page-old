@@ -95,11 +95,11 @@ const ShowTeachingReport: NextPage = () => {
         <h2 className="font-bold">指導報告書</h2>
 
         <div className="mt-4 font-bold">指導報告書の内容</div>
-        <div className="border p-2">
+        <div className="border p-2 text-black">
           {/* reportListの表示 */}
           {reportList.length > 0 ? (
             reportList.map((report) => (
-              <div key={report.id} className="border-b py-2">
+              <div key={report.id} className="border-b py-2 text-white">
                 <h3 className="font-semibold">{formatDate(report.createdAt)}</h3>
                 <h3 className="font-semibold">{report.stage}</h3>
                 <h3 className="font-semibold">{report.topic}</h3>
