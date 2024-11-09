@@ -237,6 +237,7 @@ export const Page = () => {
       console.log('/api/booking/fetchSeatMap', 'getBookingStatus()', error);
     }
   };
+  
 
   const getAllOpenDates = async (year: number, month: number) => {
     setDateList([]);
