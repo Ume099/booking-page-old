@@ -101,6 +101,7 @@ const ShowTeachingReport: NextPage = () => {
             reportList.map((report) => (
               <div key={report.id} className="border-b py-2 text-white">
                 <h3 className="font-semibold">{formatDate(report.createdAt)}</h3>
+                <h3 className="font-semibold">生徒名：{report.studentName}</h3>
                 <h3 className="font-semibold">{report.stage}</h3>
                 <h3 className="font-semibold">{report.topic}</h3>
                 <p>{report.detail}</p>
