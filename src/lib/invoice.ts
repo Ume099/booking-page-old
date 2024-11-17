@@ -89,7 +89,7 @@ type MapValueType = {
   detail: { stringValue: string; valueType: 'stringValue' };
 };
 
-export type ItemReturn = { komoku: string; price: string; detail: string }[];
+export type ItemReturn = { komoku: string; price: number; detail: string }[];
 
 export type FormatInvoiceListReturn = {
   fullName: string;

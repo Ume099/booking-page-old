@@ -92,6 +92,9 @@ export const Page = () => {
   };
 
   const onSubmit: SubmitHandler<InvoiceInput> = async (data) => {
+    data.items = [{ price: 10000, komoku: '授業料', detail: '通常コース' }]; // 数値固定
+    console.log(data);
+    data.totalPrice = data.items.reduce((sum, item) => Number(sum + item.price), 0) * 1.1;
     if (!data.totalPrice || !data.fullName) {
       toast({ title: '必須事項が入力されていません。', status: 'error', position: 'bottom' });
       return; // 何もしない
@@ -143,7 +146,6 @@ export const Page = () => {
             />
           )}
           <InputRadio
-            checkedIndex={1}
             label="支払方法"
             className="w-full"
             register={register('payment')}
