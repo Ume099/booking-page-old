@@ -133,6 +133,22 @@ export const stageList: string[] = [
   '24-4',
 ];
 
+export const stageListAdvanced: string[] = [
+  '',
+  'progate HTML CSS I',
+  'progate HTML CSS II',
+  'progate HTML CSS III',
+  'progate Python I',
+  'progate Python II',
+  'progate Python III',
+  'progate React I',
+  'progate React II',
+  'progate React III',
+  'React ウェブアプリ開発',
+  'Python 計算問題',
+  '',
+];
+
 export const TIME_OPTION_LIST = [
   '10:00~11:00',
   '11:00~12:00',

@@ -158,7 +158,7 @@ export const formatInvoiceList = (data: ObjType): FormatInvoiceListReturn => {
     item: data.item.arrayValue.values.map((value: MapValue) => ({
       accountInfo: value.mapValue.fields.accountInfo?.stringValue || '',
       komoku: value.mapValue.fields.komoku?.stringValue || '',
-      price: value.mapValue.fields.price?.integerValue || '',
+      price: Number(value.mapValue.fields.price?.integerValue) || 0,
       detail: value.mapValue.fields.detail?.stringValue || '',
     })),
   };
